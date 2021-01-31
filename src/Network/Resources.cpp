@@ -94,7 +94,7 @@ std::string Auth(SOCKET Sock){
     }
 
     if(Res.empty() || Res == "-"){
-        info("Didn't Receive any mods...");
+        info("Didn't receive any mods...");
         ListOfMods = "-";
         TCPSend("Done",Sock);
         info("Done!");

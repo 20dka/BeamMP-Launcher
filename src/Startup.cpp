@@ -81,7 +81,7 @@ void RequestRole(){
 }
 
 void CheckForUpdates(int argc,char*args[],const std::string& CV){
-    std::string link = "https://beammp.com/builds/launcher?version=true";
+    /*std::string link = "https://beammp.com/builds/launcher?version=true";
     std::string HTTP = HTTP_REQUEST(link,443);
     bool fallback = false;
     if(HTTP.find_first_of("0123456789") == std::string::npos){
@@ -116,7 +116,7 @@ void CheckForUpdates(int argc,char*args[],const std::string& CV){
             }
         }
         URelaunch(argc,args);
-    }else info("Launcher version is up to date");
+    }else info("Launcher version is up to date");*/
     TraceBack++;
 }
 void CheckDir(int argc,char*args[]){
@@ -173,7 +173,7 @@ void CustomPort(int argc, char* argv[]){
 void InitLauncher(int argc, char* argv[]) {
     system("cls");
     curl_global_init(CURL_GLOBAL_DEFAULT);
-    SetConsoleTitleA(("BeamMP Launcher v" + std::string(GetVer()) + GetPatch()).c_str());
+    SetConsoleTitleA(("BeamMP Launcher v" + std::string(GetVer()) + GetPatch() + " Beep").c_str());
     InitLog();
     CheckName(argc, argv);
     CheckLocalKey(); //will replace RequestRole
@@ -191,7 +191,7 @@ void CheckMP(const std::string& Path) {
     size_t c = DirCount(fs::path(Path));
     if (c > 3) {
         warn(std::to_string(c - 1) + " multiplayer mods will be wiped from mods/multiplayer! Close this if you don't want that!");
-        std::this_thread::sleep_for(std::chrono::seconds(15));
+        std::this_thread::sleep_for(std::chrono::seconds(5));
     }
     try {
         for (auto& p : fs::directory_iterator(Path)){
