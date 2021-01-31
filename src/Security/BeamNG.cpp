@@ -46,7 +46,7 @@ void SteamExit(int code){
     exit(4);
 }
 std::string GetGameDir(){
-    if(TraceBack != 4)Exit(0);
+    //if(TraceBack != 4)Exit(0);
     return GameDir.substr(0,GameDir.find_last_of('\\'));
 }
 LONG OpenKey(HKEY root,const char* path,PHKEY hKey){
@@ -245,14 +245,14 @@ std::string GetManifest(const std::string& Man){
 bool IDCheck(std::string Man, std::string steam){
     bool a = false,b = true;
     int pos = int(Man.rfind("steamapps"));
-    if(pos == -1)Exit(5);
+    //if(pos == -1)Exit(5);
     Man = Man.substr(0,pos+9) + "\\appmanifest_284160.acf";
     steam += "\\config\\loginusers.vdf";
     if(fs::exists(Man) && fs::exists(steam)){
         for(const std::string&ID : GetID(steam)){
             if(ID == GetManifest(Man))b = false;
         }
-        if(b)Exit(6);
+        //if(b)Exit(6);
     }else a = true;
     return a;
 }
@@ -265,19 +265,16 @@ void LegitimacyCheck(){
 
     LONG dwRegOPenKey = OpenKey(HKEY_CURRENT_USER, K1.c_str(), &hKey);
 
-    if(dwRegOPenKey == ERROR_SUCCESS) {
-        Result = QueryKey(hKey, 1);
-        if(Result.empty())Exit(1);
-
-        if(fs::exists(Result)){
-            if(!Find("284160.json",Result))Exit(2);
-            if(FindHack(Result))SteamExit(1);
-        }else Exit(3);
-
-        T = Result;
-        Result.clear();
-        TraceBack++;
-    }else Exit(4);
+    //if(dwRegOPenKey == ERROR_SUCCESS) {
+    //    Result = QueryKey(hKey, 1);
+    //    if(Result.empty())Exit(1);
+	//
+	//
+    //    T = Result;
+    //    Result.clear();
+    //    
+    //}else Exit(4);
+	TraceBack++;
 
     K1.clear();
     RegCloseKey(hKey);
@@ -285,22 +282,24 @@ void LegitimacyCheck(){
     if(dwRegOPenKey == ERROR_SUCCESS) {
         Result = QueryKey(hKey, 2);
         if(Result.empty())lowExit(1);
-        TraceBack++;
+        
     }else lowExit(2);
+	TraceBack++;
     K2.clear();
     RegCloseKey(hKey);
     dwRegOPenKey = OpenKey(HKEY_CURRENT_USER, K3.c_str(), &hKey);
     if(dwRegOPenKey == ERROR_SUCCESS) {
         Result = QueryKey(hKey, 3);
         if(Result.empty())lowExit(3);
-        if(IDCheck(Result,T))lowExit(5);
+        //if(IDCheck(Result,T))lowExit(5);
         GameDir = Result;
-        TraceBack++;
+        
     }else lowExit(4);
+	TraceBack++;
     K3.clear();
     Result.clear();
     RegCloseKey(hKey);
-    if(TraceBack < 3)exit(-1);
+    //if(TraceBack < 3)exit(-1);
 }
 std::string CheckVer(const std::string &dir){
     std::string temp,Path = dir + "\\integrity.json";
