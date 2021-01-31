@@ -77,7 +77,10 @@ std::string Login(const std::string& fields){
     return GetFail("Invalid message parsing!");
 }
 
+int tryCount = 0;
+
 void CheckLocalKey(){
+	tryCount++;
     if(exists("key") && file_size("key") < 100){
         std::ifstream Key("key");
         if(Key.is_open()) {
@@ -89,14 +92,18 @@ void CheckLocalKey(){
             json::Document d;
             d.Parse(Buffer.c_str());
             if (Buffer == "-1" || Buffer.find('{') == -1 || d.HasParseError()) {
-                fatal("Invalid answer from authentication servers, please try again later!");
+			    std::this_thread::sleep_for(std::chrono::seconds(5));
+				if (tryCount < 20) {
+					error("Invalid answer from authentication servers, please try again later!");
+					CheckLocalKey();
+				} else fatal("Invalid answer from authentication servers, please try again later!");
             }
             if(d["success"].GetBool()){
                 LoginAuth = true;
                 UpdateKey(d["private_key"].GetString());
                 PublicKey = d["public_key"].GetString();
             }else{
-                info("Auto-Authentication unsuccessful please re-login!");
+                error("Auto-Authentication unsuccessful please re-login!");
                 UpdateKey(nullptr);
             }
         }else{
