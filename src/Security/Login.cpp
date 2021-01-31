@@ -92,7 +92,6 @@ void CheckLocalKey(){
             json::Document d;
             d.Parse(Buffer.c_str());
             if (Buffer == "-1" || Buffer.find('{') == -1 || d.HasParseError()) {
-			    std::this_thread::sleep_for(std::chrono::seconds(5));
 				if (tryCount < 20) {
 					error("Invalid answer from authentication servers, please try again later!");
 					CheckLocalKey();
