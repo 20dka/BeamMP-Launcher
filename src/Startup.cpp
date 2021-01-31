@@ -5,7 +5,7 @@
 ///
 /// Created by Anonymous275 on 7/16/2020
 ///
-#include "Discord/discord_info.h"
+//#include "Discord/discord_info.h"
 #include "Network/network.h"
 #include "Security/Init.h"
 #include "Curl/http.h"
@@ -177,7 +177,7 @@ void InitLauncher(int argc, char* argv[]) {
     InitLog();
     CheckName(argc, argv);
     CheckLocalKey(); //will replace RequestRole
-    Discord_Main();
+    //Discord_Main();
     //Dev = true;
     //RequestRole();
     CustomPort(argc, argv);
