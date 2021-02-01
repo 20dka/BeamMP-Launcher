@@ -13,9 +13,10 @@
 #include <thread>
 
 unsigned long GamePID = 0;
-std::string UserFolderPath;
 std::string QueryKey(HKEY hKey,int ID);
 std::string GetGamePath(){
+    if(!UserFolderOverride.empty()) { warn("Using custom userfolder path " + UserFolderOverride); return UserFolderOverride; }
+	std::string UserFolderPath;
     if(!UserFolderPath.empty())return UserFolderPath;
 
     HKEY hKey;

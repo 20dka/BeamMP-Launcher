@@ -15,6 +15,7 @@
 #include "Logger.h"
 #include <thread>
 
+std::string UserFolderOverride;
 extern int TraceBack;
 bool Dev = false;
 namespace fs = std::filesystem;
@@ -170,7 +171,7 @@ void HandleArgs(int argc, char* argv[]){
         }
     }
 	if(argc > 2){
-		UserFolderPath = argv[2];
+		UserFolderOverride = argv[2];
 		Dev = true;
 	}
 }
