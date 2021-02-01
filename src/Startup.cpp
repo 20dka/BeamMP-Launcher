@@ -16,7 +16,6 @@
 #include <thread>
 
 std::string UserFolderOverride;
-extern int TraceBack;
 bool Dev = false;
 namespace fs = std::filesystem;
 std::string GetEN(){
@@ -81,84 +80,6 @@ void RequestRole(){
     info("Client Connected!");*/
 }
 
-void CheckForUpdates(int argc,char*args[],const std::string& CV){
-    /*std::string link = "https://beammp.com/builds/launcher?version=true";
-    std::string HTTP = HTTP_REQUEST(link,443);
-    bool fallback = false;
-    if(HTTP.find_first_of("0123456789") == std::string::npos){
-        link = "https://backup1.beammp.com/builds/launcher?version=true";
-        HTTP = HTTP_REQUEST(link,443);
-        fallback = true;
-        if(HTTP.find_first_of("0123456789") == std::string::npos) {
-            fatal("Primary Servers Offline! sorry for the inconvenience!");
-        }
-    }
-    if(fallback){
-        link = "https://backup1.beammp.com/builds/launcher?download=true";
-    }else link = "https://beammp.com/builds/launcher?download=true";
-
-    struct stat buffer{};
-    std::string Back = "BeamMP-Launcher.back";
-    if(stat(Back.c_str(), &buffer) == 0)remove(Back.c_str());
-    if(HTTP > CV){
-        system("cls");
-        info("Update found!");
-        info("Updating...");
-        if(std::rename(GetEN().c_str(), Back.c_str()))error("failed creating a backup!");
-        int i = Download(link, GetEN(),true);
-        if(i != -1){
-            error("Launcher Update failed! trying again... code : " + std::to_string(i));
-            std::this_thread::sleep_for(std::chrono::seconds(2));
-            int i2 = Download(link, GetEN(),true);
-            if(i2 != -1){
-                error("Launcher Update failed! code : " + std::to_string(i2));
-                std::this_thread::sleep_for(std::chrono::seconds(5));
-                ReLaunch(argc,args);
-            }
-        }
-        URelaunch(argc,args);
-    }else info("Launcher version is up to date");*/
-    TraceBack++;
-}
-void CheckDir(int argc,char*args[]){
-    /*std::string CDir = args[0];
-    std::string MDir = "BeamNG\\mods";
-    if(!fs::is_directory("BeamNG")){
-        if(!fs::create_directory("BeamNG")){
-            error("Cannot Create BeamNG Directory! Retrying...");
-            std::this_thread::sleep_for(std::chrono::seconds(3));
-            ReLaunch(argc,args);
-        }
-    }
-    if(fs::is_directory(MDir) && !Dev){
-        int c = 0;
-        for (auto& p : fs::directory_iterator(MDir))c++;
-        if(c > 2) {
-            warn(std::to_string(c-1) + " local launcher mods will be wiped! Close this window if you don't want that!");
-            std::this_thread::sleep_for(std::chrono::seconds(15));
-        }
-        try{
-            fs::remove_all(MDir);
-        } catch (...) {
-            error("Please close the game and try again");
-            std::this_thread::sleep_for(std::chrono::seconds(5));
-            exit(1);
-        }
-    }
-    if(fs::is_directory(MDir) && !Dev)ReLaunch(argc,args);
-    if(!fs::create_directory(MDir) && !Dev){
-        error("Cannot Create Mods Directory! Retrying...");
-        std::this_thread::sleep_for(std::chrono::seconds(3));
-        ReLaunch(argc,args);
-    }
-    if(!fs::is_directory("BeamNG\\settings")){
-        if(!fs::create_directory("BeamNG\\settings")){
-            error("Cannot Create Settings Directory! Retrying...");
-            std::this_thread::sleep_for(std::chrono::seconds(3));
-            ReLaunch(argc,args);
-        }
-    }*/
-}
 void HandleArgs(int argc, char* argv[]){
 	warn("argc: " + std::to_string(argc));
     if(argc > 1){
@@ -182,11 +103,8 @@ void InitLauncher(int argc, char* argv[]) {
     InitLog();
     CheckName(argc, argv);
     CheckLocalKey(); //will replace RequestRole
-    //Discord_Main();
 
-    //RequestRole();
     HandleArgs(argc, argv);
-    CheckForUpdates(argc, argv, std::string(GetVer()) + GetPatch());
 }
 size_t DirCount(const std::filesystem::path& path){
     return (size_t)std::distance(std::filesystem::directory_iterator{path}, std::filesystem::directory_iterator{});

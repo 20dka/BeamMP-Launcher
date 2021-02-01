@@ -18,11 +18,9 @@
 #define MAX_KEY_LENGTH 255
 #define MAX_VALUE_NAME 16383
 
-int TraceBack = 0;
 std::string GameDir;
 
 void lowExit(int code){
-    TraceBack = 0;
     std::string msg =
    "Failed to find the game please launch it. Report this if the issue persists code ";
     error(msg+std::to_string(code));
@@ -30,7 +28,6 @@ void lowExit(int code){
     exit(2);
 }
 void Exit(int code){
-    TraceBack = 0;
     std::string msg =
     "Sorry. We do not support cracked copies report this if you believe this is a mistake code ";
     error(msg+std::to_string(code));
@@ -38,7 +35,6 @@ void Exit(int code){
     exit(3);
 }
 void SteamExit(int code){
-    TraceBack = 0;
     std::string msg =
     "Illegal steam modifications detected report this if you believe this is a mistake code ";
     error(msg+std::to_string(code));
@@ -46,7 +42,6 @@ void SteamExit(int code){
     exit(4);
 }
 std::string GetGameDir(){
-    //if(TraceBack != 4)Exit(0);
     return GameDir.substr(0,GameDir.find_last_of('\\'));
 }
 LONG OpenKey(HKEY root,const char* path,PHKEY hKey){
@@ -265,17 +260,6 @@ void LegitimacyCheck(){
 
     LONG dwRegOPenKey = OpenKey(HKEY_CURRENT_USER, K1.c_str(), &hKey);
 
-    //if(dwRegOPenKey == ERROR_SUCCESS) {
-    //    Result = QueryKey(hKey, 1);
-    //    if(Result.empty())Exit(1);
-	//
-	//
-    //    T = Result;
-    //    Result.clear();
-    //    
-    //}else Exit(4);
-	TraceBack++;
-
     K1.clear();
     RegCloseKey(hKey);
     dwRegOPenKey = OpenKey(HKEY_CURRENT_USER, K2.c_str(), &hKey);
@@ -284,7 +268,6 @@ void LegitimacyCheck(){
         if(Result.empty())lowExit(1);
         
     }else lowExit(2);
-	TraceBack++;
     K2.clear();
     RegCloseKey(hKey);
     dwRegOPenKey = OpenKey(HKEY_CURRENT_USER, K3.c_str(), &hKey);
@@ -295,11 +278,9 @@ void LegitimacyCheck(){
         GameDir = Result;
         
     }else lowExit(4);
-	TraceBack++;
     K3.clear();
     Result.clear();
     RegCloseKey(hKey);
-    //if(TraceBack < 3)exit(-1);
 }
 std::string CheckVer(const std::string &dir){
     std::string temp,Path = dir + "\\integrity.json";

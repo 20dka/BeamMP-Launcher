@@ -17,7 +17,6 @@
 #include <thread>
 #include <set>
 
-extern int TraceBack;
 std::set<std::string>* ConfList = nullptr;
 bool TCPTerminate = false;
 int DEFAULT_PORT = 4444;
@@ -241,7 +240,7 @@ int Handle(EXCEPTION_POINTERS *ep){
 
 
 void CoreNetwork(){
-    while(TraceBack >= 4){
+    while(true){
         __try{
                 CoreMain();
         }__except(Handle(GetExceptionInformation())){}
