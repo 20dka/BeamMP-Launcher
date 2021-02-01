@@ -70,7 +70,7 @@ void StartGame(std::string Dir){
     exit(2);
 }
 void InitGame(const std::string& Dir){
-    if(!Dev){
+    if(!dontLaunchGame){
         std::thread Game(StartGame, Dir);
         Game.detach();
     }

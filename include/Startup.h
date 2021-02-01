@@ -13,4 +13,7 @@ std::string GetGamePath();
 std::string GetVer();
 std::string GetEN();
 extern bool Dev;
+
+extern bool dontLaunchGame;
+extern bool skipMod;
 extern std::string UserFolderOverride;

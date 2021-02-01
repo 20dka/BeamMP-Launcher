@@ -17,6 +17,8 @@
 
 std::string UserFolderOverride;
 bool Dev = false;
+bool dontLaunchGame = false;
+bool skipMod = false;
 namespace fs = std::filesystem;
 std::string GetEN(){
     return "BeamMP-Launcher.exe";
@@ -89,7 +91,15 @@ void HandleArgs(int argc, char* argv[]){
 
 		if (findArg(argc, argv,"devmode") == "true"){
 			Dev = true;
-			warn("Developer mode enabled"); 
+			warn("Developer mode enabled");
+		}
+		if (findArg(argc, argv,"launchGame") == "false"){
+			dontLaunchGame = true;
+			warn("Game won't be launched");
+		}
+		if (findArg(argc, argv,"skipMod") == "true"){
+			skipMod = true;
+			warn("Mod won't be downloaded");
 		}
 	}
 }
@@ -111,7 +121,7 @@ void CheckMP(const std::string& Path) {
     size_t c = DirCount(fs::path(Path));
     if (c > 3) {
         warn(std::to_string(c - 1) + " multiplayer mods will be wiped from mods/multiplayer! Close this if you don't want that!");
-        std::this_thread::sleep_for(std::chrono::seconds(5));
+        std::this_thread::sleep_for(std::chrono::seconds(10));
     }
     try {
         for (auto& p : fs::directory_iterator(Path)){
@@ -133,11 +143,11 @@ void PreGame(const std::string& GamePath){
     if(GameVer < CurrVer){
         fatal("Game version is old! Please update.");
     }else if(GameVer > CurrVer){
-        //warn("Game is newer than recommended, multiplayer may not work as intended!");
+        warn("Game is newer than recommended, multiplayer may not work as intended!");
     }
-    CheckMP(GetGamePath() + "mods/multiplayer");
+    CheckMP(GetGamePath() + "mods/multiplayer");  //deletes existing mods from the mp folder
 
-    if(!Dev) {
+    if(!skipMod) {
         info("Downloading mod...");
         try {
             if (!fs::exists(GetGamePath() + "mods/multiplayer")) {
