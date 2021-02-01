@@ -13,3 +13,4 @@ std::string GetGamePath();
 std::string GetVer();
 std::string GetEN();
 extern bool Dev;
+extern std::string UserFolderOverride;
