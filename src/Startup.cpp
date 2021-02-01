@@ -61,39 +61,32 @@ void CheckName(int argc,char* args[]){
     }
 }
 
-/// Deprecated
-void RequestRole(){
-    /*auto NPos = std::string::npos;
-    std::string HTTP_Result = HTTP_REQUEST("https://beammp.com/entitlement?did="+GetDID()+"&t=l",443);
-    if(HTTP_Result == "-1"){
-        HTTP_Result = HTTP_REQUEST("https://backup1.beammp.com/entitlement?did="+GetDID()+"&t=l",443);
-        if(HTTP_Result == "-1") {
-            fatal("Sorry Backend System Outage! Don't worry it will back on soon!");
-        }
-    }
-    if(HTTP_Result.find("\"MDEV\"") != NPos || HTTP_Result.find("\"CON\"") != NPos){
-        Dev = true;
-    }
-    if(HTTP_Result.find("Error") != NPos){
-        fatal("Sorry You need to be in the official BeamMP Discord to proceed! https://discord.gg/beammp");
-    }
-    info("Client Connected!");*/
+std::string findArg(int argc, char* argv[], const std::string& argName){
+	for(int i = 1;i<=argc;i++){
+		if ("-"+argName == argv[i]){
+			return argv[i+1];
+		}
+	}
+	return "";
 }
 
 void HandleArgs(int argc, char* argv[]){
 	warn("argc: " + std::to_string(argc));
     if(argc > 1){
-        std::string Port = argv[1];
-        if(Port.find_first_not_of("0123456789") == std::string::npos){
+
+
+        std::string Port = findArg(argc, argv,"port");
+        if(Port != "" && Port.find_first_not_of("0123456789") == std::string::npos){
             if(std::stoi(Port) > 1000){
                 DEFAULT_PORT = std::stoi(Port);
                 warn("Running on custom port : " + std::to_string(DEFAULT_PORT));
             }
         }
-    }
-	if(argc > 2){
-		UserFolderOverride = argv[2];
-		Dev = true;
+
+        std::string usrfldr = findArg(argc, argv,"userpath");
+		if (usrfldr != "") UserFolderOverride = usrfldr;
+
+		if (findArg(argc, argv,"devMode") == "true") Dev = true;
 	}
 }
 void InitLauncher(int argc, char* argv[]) {
