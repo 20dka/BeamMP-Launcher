@@ -74,7 +74,6 @@ std::string findArg(int argc, char* argv[], const std::string& argName){
 }
 
 void HandleArgs(int argc, char* argv[]){
-	//warn("argc: " + std::to_string(argc));
     if(argc > 1){
         std::string Port = findArg(argc, argv,"port");
         if(Port != "" && Port.find_first_not_of("0123456789") == std::string::npos){
