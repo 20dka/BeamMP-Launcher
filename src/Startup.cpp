@@ -16,6 +16,7 @@
 #include <thread>
 
 std::string UserFolderOverride;
+std::string GameFolderOverride;
 bool Dev = false;
 bool dontLaunchGame = false;
 bool skipMod = false;
@@ -87,6 +88,11 @@ void HandleArgs(int argc, char* argv[]){
 		if (usrfldr != ""){
 			UserFolderOverride = usrfldr;
 			warn("Using custom userfolder path: " + UserFolderOverride); 
+		}
+        std::string gmfldr = findArg(argc, argv,"gameFolder");
+		if (gmfldr != ""){
+			UserFolderOverride = gmfldr;
+			warn("Using custom userfolder path: " + GameFolderOverride); 
 		}
 
 		if (findArg(argc, argv,"devMode") == "true"){

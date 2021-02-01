@@ -16,4 +16,5 @@ extern bool Dev;
 
 extern bool dontLaunchGame;
 extern bool skipMod;
+extern std::string GameFolderOverride;
 extern std::string UserFolderOverride;
