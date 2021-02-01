@@ -26,7 +26,7 @@ std::string GetGamePath(){
     }
     UserFolderPath = QueryKey(hKey,4);
 
-    if(Path.empty()){
+    if(UserFolderPath.empty()){
         sk = R"(SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Shell Folders)";
         openRes = RegOpenKeyEx(HKEY_CURRENT_USER, sk, 0, KEY_ALL_ACCESS, &hKey);
         if (openRes != ERROR_SUCCESS){
