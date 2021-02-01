@@ -63,7 +63,7 @@ void CheckName(int argc,char* args[]){
 
 std::string findArg(int argc, char* argv[], const std::string& argName){
 	for(int i = 1;i<argc;i++){
-		if ("-"+argName == argv[i]){
+		if ("-"+argName == argv[i] && argc > i+1){
 			return argv[i+1];
 		}
 	}
@@ -71,22 +71,26 @@ std::string findArg(int argc, char* argv[], const std::string& argName){
 }
 
 void HandleArgs(int argc, char* argv[]){
-	warn("argc: " + std::to_string(argc));
+	//warn("argc: " + std::to_string(argc));
     if(argc > 1){
-
-
         std::string Port = findArg(argc, argv,"port");
         if(Port != "" && Port.find_first_not_of("0123456789") == std::string::npos){
             if(std::stoi(Port) > 1000){
                 DEFAULT_PORT = std::stoi(Port);
-                warn("Running on custom port : " + std::to_string(DEFAULT_PORT));
+                warn("Running on custom port: " + std::to_string(DEFAULT_PORT));
             }
         }
 
         std::string usrfldr = findArg(argc, argv,"userpath");
-		if (usrfldr != "") UserFolderOverride = usrfldr;
+		if (usrfldr != ""){
+			UserFolderOverride = usrfldr;
+			warn("Using custom userfolder path: " + UserFolderOverride); 
+		}
 
-		if (findArg(argc, argv,"devMode") == "true") Dev = true;
+		if (findArg(argc, argv,"devmode") == "true"){
+			Dev = true;
+			warn("Developer mode enabled"); 
+		}
 	}
 }
 void InitLauncher(int argc, char* argv[]) {

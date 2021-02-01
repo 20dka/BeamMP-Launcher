@@ -15,7 +15,7 @@
 unsigned long GamePID = 0;
 std::string QueryKey(HKEY hKey,int ID);
 std::string GetGamePath(){
-    if(!UserFolderOverride.empty()) { warn("Using custom userfolder path " + UserFolderOverride); return UserFolderOverride; }
+    if(!UserFolderOverride.empty()) return UserFolderOverride;
 	std::string UserFolderPath;
     if(!UserFolderPath.empty())return UserFolderPath;
 
@@ -48,8 +48,16 @@ void StartGame(std::string Dir){
     si.cb = sizeof(si);
     std::string BaseDir = Dir; //+"\\Bin64";
     //Dir += R"(\Bin64\BeamNG.drive.x64.exe)";
+	
+	
+	std::string s = "";
+ 	if(!UserFolderOverride.empty()) s = " -userpath " + UserFolderOverride;
+
+    char cstr[s.size() + 1];
+    strcpy(cstr, s.c_str());
+
     Dir += "\\BeamNG.drive.exe";
-    bSuccess = CreateProcessA(Dir.c_str(), nullptr, nullptr, nullptr, TRUE, 0, nullptr, BaseDir.c_str(), &si, &pi);
+    bSuccess = CreateProcessA(Dir.c_str(), cstr, nullptr, nullptr, TRUE, 0, nullptr, BaseDir.c_str(), &si, &pi);
     if (bSuccess){
         info("Game Launched!");
         GamePID = pi.dwProcessId;
