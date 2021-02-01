@@ -53,7 +53,7 @@ void StartGame(std::string Dir){
 	std::string s = "";
  	if(!UserFolderOverride.empty()) s = " -userpath " + UserFolderOverride;
 
-    char cstr[s.size() + 1];
+    char* cstr = new char[s.size() + 1];
     strcpy(cstr, s.c_str());
 
     Dir += "\\BeamNG.drive.exe";
