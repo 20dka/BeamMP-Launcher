@@ -8,6 +8,7 @@
 
 #include <filesystem>
 #include <Windows.h>
+#include "Startup.h"
 #include "Logger.h"
 #include <fstream>
 #include <sstream>

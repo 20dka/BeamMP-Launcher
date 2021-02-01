@@ -26,7 +26,7 @@ int main(int argc, char* argv[]) {
         th.detach();
     #endif
     InitLauncher(argc,argv);
-    //CheckDir(argc,argv);
+
     try {
         LegitimacyCheck();
     }catch (std::exception&e){
