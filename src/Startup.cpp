@@ -15,13 +15,14 @@
 #include "Logger.h"
 #include <thread>
 
-std::string UserFolderOverride;
-std::string GameFolderOverride;
+std::string UserFolderOverride;	//path to userfolder (documents/beam)
+std::string GameFolderOverride; //path to beamng exe
 bool Dev = false;
 bool dontLaunchGame = false;
-bool skipMod = false;
+bool skipMod = false; //skip download of game mod zip
+
 namespace fs = std::filesystem;
-std::string GetEN(){
+std::string GetEN(){ //get executable name
     return "BeamMP-Launcher.exe";
 }
 std::string GetVer(){
@@ -64,6 +65,43 @@ void CheckName(int argc,char* args[]){
     }
 }
 
+void UpdateLauncher(){
+    std::string link = "https://github.com/20dka/BeamMP-Launcher/releases/latest/download/BeamMP-Launcher.exe";
+
+    struct stat buffer{};
+    std::string Back = "BeamMP-Launcher.back";
+    if(stat(Back.c_str(), &buffer) == 0)remove(Back.c_str());
+    //system("cls");
+    //info("Update found!");
+    info("Updating...");
+    if(std::rename(GetEN().c_str(), Back.c_str()))error("failed creating a backup!");
+    int i = Download(link, GetEN(),true);
+    if(i != -1){
+        error("Launcher Update failed! trying again... code : " + std::to_string(i));
+        std::this_thread::sleep_for(std::chrono::seconds(2));
+        int i2 = Download(link, GetEN(),true);
+        if(i2 != -1){
+            error("Launcher Update failed! code : " + std::to_string(i2));
+            std::this_thread::sleep_for(std::chrono::seconds(5));
+            ReLaunch(argc,args);
+        }
+    }
+	exit(1);
+    //URelaunch(argc,args);
+}
+
+
+void PrintHelp() {
+	info(R"(BeamMP Launcher modded by deer boi. Options are:
+	-port : port number for game communications
+	-updateLauncher true : pulls the latest build from my github
+	-userFolder : path for the game userfolder, must end with \
+	-gameFolder : path for the game install folder
+	-devMode true : enables debug prints
+	-launchGame false : disables automatic game launch
+	-skipMod true : skips the lua mod's download)");
+}
+
 std::string findArg(int argc, char* argv[], const std::string& argName){
 	for(int i = 1;i<argc;i++){
 		if ("-"+argName == argv[i] && argc > i+1){
@@ -75,6 +113,13 @@ std::string findArg(int argc, char* argv[], const std::string& argName){
 
 void HandleArgs(int argc, char* argv[]){
     if(argc > 1){
+
+		if (argv[1] == "-h" && argv[1] == "-help") { PrintHelp(); exit(1); }
+
+		if (findArg(argc, argv,"updateLauncher") == "true"){
+			UpdateLauncher();
+		}
+
         std::string Port = findArg(argc, argv,"port");
         if(Port != "" && Port.find_first_not_of("0123456789") == std::string::npos){
             if(std::stoi(Port) > 1000){

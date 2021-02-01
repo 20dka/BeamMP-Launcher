@@ -89,7 +89,7 @@ void CheckLocalKey(){
             Key.read(&Buffer[0], Size);
             Key.close();
             Buffer = PostHTTP("https://auth.beammp.com/userlogin", R"({"pk":")"+Buffer+"\"}");
-			info("login auth reply: " + Buffer);
+			//info("login auth reply: " + Buffer);
             json::Document d;
             d.Parse(Buffer.c_str());
             if (Buffer == "-1" || Buffer.find('{') == -1 || d.HasParseError()) {
