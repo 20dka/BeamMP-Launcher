@@ -83,13 +83,13 @@ void HandleArgs(int argc, char* argv[]){
             }
         }
 
-        std::string usrfldr = findArg(argc, argv,"userpath");
+        std::string usrfldr = findArg(argc, argv,"userFolder");
 		if (usrfldr != ""){
 			UserFolderOverride = usrfldr;
 			warn("Using custom userfolder path: " + UserFolderOverride); 
 		}
 
-		if (findArg(argc, argv,"devmode") == "true"){
+		if (findArg(argc, argv,"devMode") == "true"){
 			Dev = true;
 			warn("Developer mode enabled");
 		}

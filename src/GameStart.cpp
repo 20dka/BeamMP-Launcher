@@ -53,8 +53,9 @@ void StartGame(std::string Dir){
 	std::string s = "";
  	if(!UserFolderOverride.empty()) s = " -userpath " + UserFolderOverride;
 
-    char* cstr = new char[s.size() + 1];
-    strcpy(cstr, s.c_str());
+	int cstrSize = s.size() + 1;
+    char* cstr = new char[cstrSize];
+    strcpy_s(cstr, cstrSize, s.c_str());
 
     Dir += "\\BeamNG.drive.exe";
     bSuccess = CreateProcessA(Dir.c_str(), cstr, nullptr, nullptr, TRUE, 0, nullptr, BaseDir.c_str(), &si, &pi);
