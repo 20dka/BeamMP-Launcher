@@ -62,7 +62,7 @@ void CheckName(int argc,char* args[]){
 }
 
 std::string findArg(int argc, char* argv[], const std::string& argName){
-	for(int i = 1;i<=argc;i++){
+	for(int i = 1;i<argc;i++){
 		if ("-"+argName == argv[i]){
 			return argv[i+1];
 		}
