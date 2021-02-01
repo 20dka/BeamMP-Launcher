@@ -53,7 +53,7 @@ void StartGame(std::string Dir){
 	std::string s = "";
  	if(!UserFolderOverride.empty()) s = " -userpath " + UserFolderOverride;
 
-	int cstrSize = s.size() + 1;
+	size_t cstrSize = s.size() + 1;
     char* cstr = new char[cstrSize];
     strcpy_s(cstr, cstrSize, s.c_str());
 

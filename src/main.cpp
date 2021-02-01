@@ -32,6 +32,7 @@ int main(int argc, char* argv[]) {
     }catch (std::exception&e){
         fatal("Main 1 : " + std::string(e.what()));
     }
+	info(GetGameDir());
     PreGame(GetGameDir());
     InitGame(GetGameDir());
     CoreNetwork();
