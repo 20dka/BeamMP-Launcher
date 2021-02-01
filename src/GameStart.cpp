@@ -13,10 +13,10 @@
 #include <thread>
 
 unsigned long GamePID = 0;
+std::string UserFolderPath;
 std::string QueryKey(HKEY hKey,int ID);
 std::string GetGamePath(){
-    static std::string Path;
-    if(!Path.empty())return Path;
+    if(!UserFolderPath.empty())return UserFolderPath;
 
     HKEY hKey;
     LPCTSTR sk = "Software\\BeamNG\\BeamNG.drive";
@@ -24,7 +24,7 @@ std::string GetGamePath(){
     if (openRes != ERROR_SUCCESS){
         fatal("Please launch the game at least once!");
     }
-    Path = QueryKey(hKey,4);
+    UserFolderPath = QueryKey(hKey,4);
 
     if(Path.empty()){
         sk = R"(SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Shell Folders)";
@@ -32,12 +32,12 @@ std::string GetGamePath(){
         if (openRes != ERROR_SUCCESS){
            fatal("Cannot get Documents directory!");
         }
-        Path = QueryKey(hKey,5);
-        Path += "\\BeamNG.drive\\";
-        return Path;
+        UserFolderPath = QueryKey(hKey,5);
+        UserFolderPath += "\\BeamNG.drive\\";
+        return UserFolderPath;
     }
 
-    return Path;
+    return UserFolderPath;
 }
 
 void StartGame(std::string Dir){
@@ -53,7 +53,7 @@ void StartGame(std::string Dir){
         info("Game Launched!");
         GamePID = pi.dwProcessId;
         WaitForSingleObject(pi.hProcess, INFINITE);
-        error("Game Closed! launcher closing soon");
+        //error("Game Closed! launcher closing soon");
     }else{
         error("Failed to Launch the game! launcher closing soon");
     }

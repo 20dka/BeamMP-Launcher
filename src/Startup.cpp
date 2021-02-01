@@ -158,7 +158,8 @@ void CheckDir(int argc,char*args[]){
         }
     }*/
 }
-void CustomPort(int argc, char* argv[]){
+void HandleArgs(int argc, char* argv[]){
+	warn("argc: " + std::to_string(argc));
     if(argc > 1){
         std::string Port = argv[1];
         if(Port.find_first_not_of("0123456789") == std::string::npos){
@@ -167,8 +168,11 @@ void CustomPort(int argc, char* argv[]){
                 warn("Running on custom port : " + std::to_string(DEFAULT_PORT));
             }
         }
-        if(argc > 2)Dev = true;
     }
+	if(argc > 2){
+		UserFolderPath = argv[2];
+		Dev = true;
+	}
 }
 void InitLauncher(int argc, char* argv[]) {
     system("cls");
@@ -178,9 +182,9 @@ void InitLauncher(int argc, char* argv[]) {
     CheckName(argc, argv);
     CheckLocalKey(); //will replace RequestRole
     //Discord_Main();
-    //Dev = true;
+
     //RequestRole();
-    CustomPort(argc, argv);
+    HandleArgs(argc, argv);
     CheckForUpdates(argc, argv, std::string(GetVer()) + GetPatch());
 }
 size_t DirCount(const std::filesystem::path& path){
@@ -213,7 +217,7 @@ void PreGame(const std::string& GamePath){
     if(GameVer < CurrVer){
         fatal("Game version is old! Please update.");
     }else if(GameVer > CurrVer){
-        warn("Game is newer than recommended, multiplayer may not work as intended!");
+        //warn("Game is newer than recommended, multiplayer may not work as intended!");
     }
     CheckMP(GetGamePath() + "mods/multiplayer");
 
