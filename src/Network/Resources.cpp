@@ -283,7 +283,7 @@ void SyncResources(SOCKET Sock){
             }
 
             std::string Name = std::to_string(Pos) + "/" + std::to_string(Amount) + ": " + FName;
-
+			info("Downloading mod: " + Name);
             Data = MultiDownload(Sock,DSock,std::stoull(*FS), Name);
 
             if(Terminate)break;
