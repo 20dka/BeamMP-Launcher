@@ -112,6 +112,7 @@ std::string findArg(int argc, char* argv[], const std::string& argName){
 }
 
 void HandleArgs(int argc, char* argv[]){
+	info(argv[0]);
     if(argc > 1){
 
 		if (argv[1] == "-h" && argv[1] == "--help") { PrintHelp(); exit(1); }
@@ -210,7 +211,4 @@ void PreGame(const std::string& GamePath){
         info("Download Complete!");
     }
 
-   /*debug("Name : " + GetDName());
-    debug("Discriminator : " + GetDTag());
-    debug("Unique ID : " + GetDID());*/
 }
