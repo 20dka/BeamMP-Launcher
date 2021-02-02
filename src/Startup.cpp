@@ -137,7 +137,7 @@ void HandleArgs(int argc, char* argv[]){
         std::string gmfldr = findArg(argc, argv,"gameFolder");
 		if (gmfldr != ""){
 			GameFolderOverride = gmfldr;
-			warn("Using custom userfolder path: " + GameFolderOverride); 
+			warn("Using custom gamefolder path: " + GameFolderOverride); 
 		}
 
 		if (findArg(argc, argv,"devMode") == "true"){

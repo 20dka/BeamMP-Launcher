@@ -253,6 +253,12 @@ bool IDCheck(std::string Man, std::string steam){
     return a;
 }
 void LegitimacyCheck(){
+	
+	if (!GameFolderOverride.empty()){
+		GameDir = GameFolderOverride;
+		return;
+	}
+
     std::string Result,T;
     std::string K1 = R"(Software\Valve\Steam)";
     std::string K2 = R"(Software\Valve\Steam\Apps\284160)";
@@ -271,9 +277,7 @@ void LegitimacyCheck(){
     }else lowExit(2);
     K2.clear();
     RegCloseKey(hKey);
-	if (!GameFolderOverride.empty()){
-		GameDir = GameFolderOverride;
-	}else{
+
 		dwRegOPenKey = OpenKey(HKEY_CURRENT_USER, K3.c_str(), &hKey);
 		if(dwRegOPenKey == ERROR_SUCCESS) {
 			Result = QueryKey(hKey, 3);
@@ -283,7 +287,7 @@ void LegitimacyCheck(){
 		}else lowExit(4);
 		K3.clear();
 		Result.clear();
-	}
+
     RegCloseKey(hKey);
 }
 std::string CheckVer(const std::string &dir){
