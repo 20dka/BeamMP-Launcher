@@ -82,8 +82,8 @@ void UpdateLauncher(){
         int i2 = Download(link, GetEN(),true);
         if(i2 != -1){
             error("Launcher Update failed! code : " + std::to_string(i2));
-            std::this_thread::sleep_for(std::chrono::seconds(5));
-            ReLaunch(argc,args);
+            std::this_thread::sleep_for(std::chrono::seconds(10));
+            //ReLaunch(argc,args);
         }
     }
 	exit(1);
@@ -114,7 +114,7 @@ std::string findArg(int argc, char* argv[], const std::string& argName){
 void HandleArgs(int argc, char* argv[]){
     if(argc > 1){
 
-		if (argv[1] == "-h" && argv[1] == "-help") { PrintHelp(); exit(1); }
+		if (argv[1] == "-h" && argv[1] == "--help") { PrintHelp(); exit(1); }
 
 		if (findArg(argc, argv,"updateLauncher") == "true"){
 			UpdateLauncher();
