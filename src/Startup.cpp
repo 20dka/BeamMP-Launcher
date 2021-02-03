@@ -23,81 +23,81 @@ bool dontLaunchGame = false;
 
 namespace fs = std::filesystem;
 std::string GetExeName(){ //get executable name
-    return "BeamMP-Launcher.exe";
+	return "BeamMP-Launcher.exe";
 }
 std::string GetVer(){
-    return "1.80";
+	return "1.80";
 }
 std::string GetPatch(){
-    return ".94";
+	return ".94";
 }
 void ReLaunch(int argc,char*args[]){
-    std::string Arg;
-    for(int c = 2; c <= argc; c++){
-        Arg += " ";
-        Arg += args[c-1];
-    }
-    system("cls");
-    ShellExecute(nullptr,"runas",GetExeName().c_str(),Arg.c_str(),nullptr,SW_SHOWNORMAL);
-    ShowWindow(GetConsoleWindow(),0);
-    std::this_thread::sleep_for(std::chrono::seconds(1));
-    exit(1);
+	std::string Arg;
+	for(int c = 2; c <= argc; c++){
+		Arg += " ";
+		Arg += args[c-1];
+	}
+	system("cls");
+	ShellExecute(nullptr,"runas",GetExeName().c_str(),Arg.c_str(),nullptr,SW_SHOWNORMAL);
+	ShowWindow(GetConsoleWindow(),0);
+	std::this_thread::sleep_for(std::chrono::seconds(1));
+	exit(1);
 }
 void URelaunch(int argc,char* args[]){
-    std::string Arg;
-    for(int c = 2; c <= argc; c++){
-        Arg += " ";
-        Arg += args[c-1];
-    }
-    ShellExecute(nullptr,"open",GetExeName().c_str(),Arg.c_str(),nullptr,SW_SHOWNORMAL);
-    ShowWindow(GetConsoleWindow(),0);
-    std::this_thread::sleep_for(std::chrono::seconds(1));
-    exit(1);
+	std::string Arg;
+	for(int c = 2; c <= argc; c++){
+		Arg += " ";
+		Arg += args[c-1];
+	}
+	ShellExecute(nullptr,"open",GetExeName().c_str(),Arg.c_str(),nullptr,SW_SHOWNORMAL);
+	ShowWindow(GetConsoleWindow(),0);
+	std::this_thread::sleep_for(std::chrono::seconds(1));
+	exit(1);
 }
 void CheckName(int argc,char* args[]){
-    struct stat info{};
-    std::string DN = GetExeName(),CDir = args[0],FN = CDir.substr(CDir.find_last_of('\\')+1);
-    if(FN != DN){
-        if(stat(DN.c_str(),&info)==0)remove(DN.c_str());
-        if(stat(DN.c_str(),&info)==0)ReLaunch(argc,args);
-        std::rename(FN.c_str(), DN.c_str());
-        URelaunch(argc,args);
-    }
+	struct stat info{};
+	std::string DN = GetExeName(),CDir = args[0],FN = CDir.substr(CDir.find_last_of('\\')+1);
+	if(FN != DN){
+		if(stat(DN.c_str(),&info)==0)remove(DN.c_str());
+		if(stat(DN.c_str(),&info)==0)ReLaunch(argc,args);
+		std::rename(FN.c_str(), DN.c_str());
+		URelaunch(argc,args);
+	}
 }
 
 void UpdateLauncher(const std::string& exePath){
-    std::string launcherURL = "https://github.com/20dka/BeamMP-Launcher/releases/latest/download/BeamMP-Launcher.exe";
+	std::string launcherURL = "https://github.com/20dka/BeamMP-Launcher/releases/latest/download/BeamMP-Launcher.exe";
 	info("Going to download to: " + exePath);
-    struct stat buffer{};
+	struct stat buffer{};
 
-    info("Updating...");
+	info("Updating...");
 
 	std::string Back = exePath;
 	Back.erase(Back.end()-3,Back.end());
-    Back += "back";
+	Back += "back";
 
-    if(stat(Back.c_str(), &buffer) == 0) {
+	if(stat(Back.c_str(), &buffer) == 0) {
 		info("found old backup, yeeting");
 		remove(Back.c_str());
 	}
 
-    if(std::rename(exePath.c_str(), Back.c_str()))error("failed creating a backup!");
+	if(std::rename(exePath.c_str(), Back.c_str()))error("failed creating a backup!");
 
-    int i = Download(launcherURL, exePath, true);
-    if(i != -1){
-        error("Launcher Update failed! trying again... code : " + std::to_string(i));
-        std::this_thread::sleep_for(std::chrono::seconds(2));
-        int i2 = Download(launcherURL, exePath, true);
-        if(i2 != -1){
-            error("Launcher Update failed! code : " + std::to_string(i2));
-            std::this_thread::sleep_for(std::chrono::seconds(10));
+	int i = Download(launcherURL, exePath, true);
+	if(i != -1){
+		error("Launcher Update failed! trying again... code : " + std::to_string(i));
+		std::this_thread::sleep_for(std::chrono::seconds(2));
+		int i2 = Download(launcherURL, exePath, true);
+		if(i2 != -1){
+			error("Launcher Update failed! code : " + std::to_string(i2));
+			std::this_thread::sleep_for(std::chrono::seconds(10));
 			exit(1);
-            //ReLaunch(argc,args);
-        }
-    }
+			//ReLaunch(argc,args);
+		}
+	}
 	info("Download successful");
 	exit(1);
-    //URelaunch(argc,args);
+	//URelaunch(argc,args);
 }
 
 
@@ -123,7 +123,7 @@ std::string findArg(int argc, char* argv[], const std::string& argName){
 }
 
 void HandleArgs(int argc, char* argv[]){
-    if(argc == 1) return;
+	if(argc == 1) return;
 
 	if (findArg(argc, argv,"h") == "noVal" || findArg(argc, argv,"-help") == "noVal") { PrintHelp(); exit(1); } //-h or --help
 
@@ -131,15 +131,15 @@ void HandleArgs(int argc, char* argv[]){
 		UpdateLauncher(std::string(argv[0]));
 	}
 
-    std::string Port = findArg(argc, argv,"port");
-    if(Port != "" && Port.find_first_not_of("0123456789") == std::string::npos){
-        if(std::stoi(Port) > 1000){
-            GamePort = std::stoi(Port);
-            warn("Running on custom port: " + std::to_string(GamePort));
-        }
-    }
+	std::string Port = findArg(argc, argv,"port");
+	if(Port != "" && Port.find_first_not_of("0123456789") == std::string::npos){
+		if(std::stoi(Port) > 1000){
+			GamePort = std::stoi(Port);
+			warn("Running on custom port: " + std::to_string(GamePort));
+		}
+	}
 
-    std::string buildName = findArg(argc, argv,"useBuild");
+	std::string buildName = findArg(argc, argv,"useBuild");
 	if (buildName == "deer"){
 		ClientBuild = "deer";
 		warn("Using deer boi's build"); 
@@ -154,12 +154,12 @@ void HandleArgs(int argc, char* argv[]){
 		warn("Using custom build: " + buildName); 
 	}
 
-    std::string usrfldr = findArg(argc, argv,"userFolder");
+	std::string usrfldr = findArg(argc, argv,"userFolder");
 	if (usrfldr != ""){
 		UserFolderOverride = usrfldr;
 		warn("Using custom userfolder path: " + UserFolderOverride); 
 	}
-    std::string gmfldr = findArg(argc, argv,"gameFolder");
+	std::string gmfldr = findArg(argc, argv,"gameFolder");
 	if (gmfldr != ""){
 		GameFolderOverride = gmfldr;
 		warn("Using custom gamefolder path: " + GameFolderOverride); 
@@ -175,56 +175,54 @@ void HandleArgs(int argc, char* argv[]){
 	}
 }
 void InitLauncher(int argc, char* argv[]) {
-    system("cls");
-    curl_global_init(CURL_GLOBAL_DEFAULT);
-    SetConsoleTitleA(("DeerMP Launcher v" + std::string(GetVer()) + GetPatch() + " Deer").c_str());
-    InitLog();
-    //CheckName(argc, argv);
-    CheckLocalKey(); //auth on startup
+	system("cls");
+	curl_global_init(CURL_GLOBAL_DEFAULT);
+	SetConsoleTitleA(("DeerMP Launcher v" + std::string(GetVer()) + GetPatch() + " Deer").c_str());
+	InitLog();
+	//CheckName(argc, argv); //rename if launcher name is incorrect or something idk noboody needs this
 
-    HandleArgs(argc, argv); //cmd args
+	HandleArgs(argc, argv); //cmd args
 
-	if (ClientBuild == "") {
-		info("no build specified, checking backend for roles");
-		ClientBuild = "public";
-	}
+	CheckLocalKey(); //auth on startup
+
+
 }
 size_t DirCount(const std::filesystem::path& path){
-    return (size_t)std::distance(std::filesystem::directory_iterator{path}, std::filesystem::directory_iterator{});
+	return (size_t)std::distance(std::filesystem::directory_iterator{path}, std::filesystem::directory_iterator{});
 }
 void CheckMP(const std::string& Path) {
-    if (!fs::exists(Path))return;
-    size_t c = DirCount(fs::path(Path));
-    if (c > 3) {
-        warn(std::to_string(c - 1) + " multiplayer mods will be wiped from mods/multiplayer! Close this if you don't want that!");
-        std::this_thread::sleep_for(std::chrono::seconds(10));
-    }
-    try {
-        for (auto& p : fs::directory_iterator(Path)){
-            if(p.exists() && !p.is_directory()){
-                std::string Name = p.path().filename().u8string();
-                for(char&Ch : Name)Ch = char(tolower(Ch));
-                if(Name != "beammp.zip")fs::remove(p.path());
-            }
-        }
-    } catch (...) {
-        fatal("Please close the game, and try again!");
-    }
+	if (!fs::exists(Path))return;
+	size_t c = DirCount(fs::path(Path));
+	if (c > 3) {
+		warn(std::to_string(c - 1) + " multiplayer mods will be wiped from mods/multiplayer! Close this if you don't want that!");
+		std::this_thread::sleep_for(std::chrono::seconds(10));
+	}
+	try {
+		for (auto& p : fs::directory_iterator(Path)){
+			if(p.exists() && !p.is_directory()){
+				std::string Name = p.path().filename().u8string();
+				for(char&Ch : Name)Ch = char(tolower(Ch));
+				if(Name != "beammp.zip")fs::remove(p.path());
+			}
+		}
+	} catch (...) {
+		fatal("Please close the game, and try again!");
+	}
 
 }
 void PreGame(const std::string& GamePath){
-    CheckMP(GetUserFolder() + "mods/multiplayer");  //deletes existing mods from the mp folder
+	CheckMP(GetUserFolder() + "mods/multiplayer");  //deletes existing mods from the mp folder
 
 	if (ClientBuild == "none") return;
 
-        info("Downloading mod...");
-        try {
-            if (!fs::exists(GetUserFolder() + "mods/multiplayer")) {
-                fs::create_directories(GetUserFolder() + "mods/multiplayer");
-            }
-        }catch(std::exception&e){
-            fatal(e.what());
-        }
+		info("Downloading mod...");
+		try {
+			if (!fs::exists(GetUserFolder() + "mods/multiplayer")) {
+				fs::create_directories(GetUserFolder() + "mods/multiplayer");
+			}
+		}catch(std::exception&e){
+			fatal(e.what());
+		}
 
 
 		if (ClientBuild == "public")
@@ -233,5 +231,5 @@ void PreGame(const std::string& GamePath){
 			Download("https://github.com/20dka/files/blob/master/BeamMP.zip?raw=true", GetUserFolder() + R"(mods\multiplayer\BeamMP.zip)", true);
 		else Download(ClientBuild, GetUserFolder() + R"(mods\multiplayer\BeamMP.zip)", true);
 
-        info("Download Complete!");
+		info("Download Complete!");
 }

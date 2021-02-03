@@ -14,26 +14,26 @@
 
 
 [[noreturn]] void flush(){
-    while(true){
-        std::cout.flush();
-        std::this_thread::sleep_for(std::chrono::milliseconds(100));
-    }
+	while(true){
+		std::cout.flush();
+		std::this_thread::sleep_for(std::chrono::milliseconds(100));
+	}
 }
 
 int main(int argc, char* argv[]) {
-    #ifdef DEBUG
-        std::thread th(flush);
-        th.detach();
-    #endif
-    InitLauncher(argc,argv);
+	#ifdef DEBUG
+		std::thread th(flush);
+		th.detach();
+	#endif
+	InitLauncher(argc,argv);
 
-    try {
-        LegitimacyCheck();
-    }catch (std::exception&e){
-        fatal("Main 1 : " + std::string(e.what()));
-    }
+	try {
+		LegitimacyCheck();
+	}catch (std::exception&e){
+		fatal("Main 1 : " + std::string(e.what()));
+	}
 	//info(GetGameDir());
-    PreGame(GetGameDir());
-    InitGame(GetGameDir());
-    CoreNetwork();
+	PreGame(GetGameDir());
+	InitGame(GetGameDir());
+	CoreNetwork();
 }

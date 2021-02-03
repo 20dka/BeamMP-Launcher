@@ -22,235 +22,235 @@
 std::string GameDir;
 
 void lowExit(int code){
-    std::string msg =
+	std::string msg =
    "Failed to find the game please launch it. Report this if the issue persists code ";
-    error(msg+std::to_string(code));
-    std::this_thread::sleep_for(std::chrono::seconds(10));
-    exit(2);
+	error(msg+std::to_string(code));
+	std::this_thread::sleep_for(std::chrono::seconds(10));
+	exit(2);
 }
 void Exit(int code){
-    std::string msg =
-    "Sorry. We do not support cracked copies report this if you believe this is a mistake code ";
-    error(msg+std::to_string(code));
-    std::this_thread::sleep_for(std::chrono::seconds(10));
-    exit(3);
+	std::string msg =
+	"Sorry. We do not support cracked copies report this if you believe this is a mistake code ";
+	error(msg+std::to_string(code));
+	std::this_thread::sleep_for(std::chrono::seconds(10));
+	exit(3);
 }
 void SteamExit(int code){
-    std::string msg =
-    "Illegal steam modifications detected report this if you believe this is a mistake code ";
-    error(msg+std::to_string(code));
-    std::this_thread::sleep_for(std::chrono::seconds(10));
-    exit(4);
+	std::string msg =
+	"Illegal steam modifications detected report this if you believe this is a mistake code ";
+	error(msg+std::to_string(code));
+	std::this_thread::sleep_for(std::chrono::seconds(10));
+	exit(4);
 }
 std::string GetGameDir(){
-    return GameDir.substr(0,GameDir.find_last_of('\\'));
+	return GameDir.substr(0,GameDir.find_last_of('\\'));
 }
 LONG OpenKey(HKEY root,const char* path,PHKEY hKey){
-    return RegOpenKeyEx(root, reinterpret_cast<LPCSTR>(path), 0, KEY_READ, hKey);
+	return RegOpenKeyEx(root, reinterpret_cast<LPCSTR>(path), 0, KEY_READ, hKey);
 }
 std::string QueryKey(HKEY hKey,int ID){
-    TCHAR    achKey[MAX_KEY_LENGTH];   // buffer for subkey name
-    DWORD    cbName;                   // size of name string
-    TCHAR    achClass[MAX_PATH] = TEXT("");  // buffer for class name
-    DWORD    cchClassName = MAX_PATH;  // size of class string
-    DWORD    cSubKeys=0;               // number of subkeys
-    DWORD    cbMaxSubKey;              // longest subkey size
-    DWORD    cchMaxClass;              // longest class string
-    DWORD    cValues;              // number of values for key
-    DWORD    cchMaxValue;          // longest value name
-    DWORD    cbMaxValueData;       // longest value data
-    DWORD    cbSecurityDescriptor; // size of security descriptor
-    FILETIME ftLastWriteTime;      // last write time
+	TCHAR	achKey[MAX_KEY_LENGTH];   // buffer for subkey name
+	DWORD	cbName;				   // size of name string
+	TCHAR	achClass[MAX_PATH] = TEXT("");  // buffer for class name
+	DWORD	cchClassName = MAX_PATH;  // size of class string
+	DWORD	cSubKeys=0;			   // number of subkeys
+	DWORD	cbMaxSubKey;			  // longest subkey size
+	DWORD	cchMaxClass;			  // longest class string
+	DWORD	cValues;			  // number of values for key
+	DWORD	cchMaxValue;		  // longest value name
+	DWORD	cbMaxValueData;	   // longest value data
+	DWORD	cbSecurityDescriptor; // size of security descriptor
+	FILETIME ftLastWriteTime;	  // last write time
 
-    DWORD i, retCode;
+	DWORD i, retCode;
 
-    TCHAR  achValue[MAX_VALUE_NAME];
-    DWORD cchValue = MAX_VALUE_NAME;
+	TCHAR  achValue[MAX_VALUE_NAME];
+	DWORD cchValue = MAX_VALUE_NAME;
 
-    retCode = RegQueryInfoKey(
-            hKey,                    // key handle
-            achClass,                // buffer for class name
-            &cchClassName,           // size of class string
-            nullptr,                    // reserved
-            &cSubKeys,               // number of subkeys
-            &cbMaxSubKey,            // longest subkey size
-            &cchMaxClass,            // longest class string
-            &cValues,                // number of values for this key
-            &cchMaxValue,            // longest value name
-            &cbMaxValueData,         // longest value data
-            &cbSecurityDescriptor,   // security descriptor
-            &ftLastWriteTime);       // last write time
+	retCode = RegQueryInfoKey(
+			hKey,					// key handle
+			achClass,				// buffer for class name
+			&cchClassName,		   // size of class string
+			nullptr,					// reserved
+			&cSubKeys,			   // number of subkeys
+			&cbMaxSubKey,			// longest subkey size
+			&cchMaxClass,			// longest class string
+			&cValues,				// number of values for this key
+			&cchMaxValue,			// longest value name
+			&cbMaxValueData,		 // longest value data
+			&cbSecurityDescriptor,   // security descriptor
+			&ftLastWriteTime);	   // last write time
 
-    BYTE* buffer = new BYTE[cbMaxValueData];
-    ZeroMemory(buffer, cbMaxValueData);
-    if (cSubKeys){
-        for (i=0; i<cSubKeys; i++){
-            cbName = MAX_KEY_LENGTH;
-            retCode = RegEnumKeyEx(hKey, i,achKey,&cbName,nullptr,nullptr,nullptr,&ftLastWriteTime);
-            if (retCode == ERROR_SUCCESS){
-                if(strcmp(achKey,"Steam App 284160") == 0){
-                    return achKey;
-                }
-            }
-        }
-    }
-    if (cValues){
-        for (i=0, retCode = ERROR_SUCCESS; i<cValues; i++){
-            cchValue = MAX_VALUE_NAME;
-            achValue[0] = '\0';
-            retCode = RegEnumValue(hKey, i,achValue,&cchValue,nullptr,nullptr,nullptr,nullptr);
-            if (retCode == ERROR_SUCCESS ){
-                DWORD lpData = cbMaxValueData;
-                buffer[0] = '\0';
-                LONG dwRes = RegQueryValueEx(hKey, achValue, nullptr, nullptr, buffer, &lpData);
-                std::string data = (char *)(buffer);
-                std::string key = achValue;
+	BYTE* buffer = new BYTE[cbMaxValueData];
+	ZeroMemory(buffer, cbMaxValueData);
+	if (cSubKeys){
+		for (i=0; i<cSubKeys; i++){
+			cbName = MAX_KEY_LENGTH;
+			retCode = RegEnumKeyEx(hKey, i,achKey,&cbName,nullptr,nullptr,nullptr,&ftLastWriteTime);
+			if (retCode == ERROR_SUCCESS){
+				if(strcmp(achKey,"Steam App 284160") == 0){
+					return achKey;
+				}
+			}
+		}
+	}
+	if (cValues){
+		for (i=0, retCode = ERROR_SUCCESS; i<cValues; i++){
+			cchValue = MAX_VALUE_NAME;
+			achValue[0] = '\0';
+			retCode = RegEnumValue(hKey, i,achValue,&cchValue,nullptr,nullptr,nullptr,nullptr);
+			if (retCode == ERROR_SUCCESS ){
+				DWORD lpData = cbMaxValueData;
+				buffer[0] = '\0';
+				LONG dwRes = RegQueryValueEx(hKey, achValue, nullptr, nullptr, buffer, &lpData);
+				std::string data = (char *)(buffer);
+				std::string key = achValue;
 
-                switch (ID){
-                    case 1: if(key == "SteamExe"){
-                                auto p = data.find_last_of("/\\");
-                                if(p != std::string::npos){
-                                    return data.substr(0,p);
-                                }
-                            }
-                            break;
-                    case 2: if(key == "Name" && data == "BeamNG.drive")return data;break;
-                    case 3: if(key == "rootpath")return data;break;
-                    case 4: if(key == "userpath_override")return data;
-                    case 5: if(key == "Personal")return data;
-                    default: break;
-                }
-            }
-        }
-    }
-    delete [] buffer;
-    return "";
+				switch (ID){
+					case 1: if(key == "SteamExe"){
+								auto p = data.find_last_of("/\\");
+								if(p != std::string::npos){
+									return data.substr(0,p);
+								}
+							}
+							break;
+					case 2: if(key == "Name" && data == "BeamNG.drive")return data;break;
+					case 3: if(key == "rootpath")return data;break;
+					case 4: if(key == "userpath_override")return data;
+					case 5: if(key == "Personal")return data;
+					default: break;
+				}
+			}
+		}
+	}
+	delete [] buffer;
+	return "";
 }
 namespace fs = std::filesystem;
 
 bool NameValid(const std::string& N){
-    if(N == "config" || N == "librarycache"){
-        return true;
-    }
-    if(N.find_first_not_of("0123456789") == std::string::npos){
-        return true;
-    }
-    return false;
+	if(N == "config" || N == "librarycache"){
+		return true;
+	}
+	if(N.find_first_not_of("0123456789") == std::string::npos){
+		return true;
+	}
+	return false;
 }
 void FileList(std::vector<std::string>&a,const std::string& Path){
-    for (const auto &entry : fs::directory_iterator(Path)) {
-        const auto& DPath = entry.path();
-        if (!entry.is_directory()) {
-            a.emplace_back(DPath.u8string());
-        }else if(NameValid(DPath.filename().u8string())){
-            FileList(a, DPath.u8string());
-        }
-    }
+	for (const auto &entry : fs::directory_iterator(Path)) {
+		const auto& DPath = entry.path();
+		if (!entry.is_directory()) {
+			a.emplace_back(DPath.u8string());
+		}else if(NameValid(DPath.filename().u8string())){
+			FileList(a, DPath.u8string());
+		}
+	}
 }
 bool Find(const std::string& FName,const std::string& Path){
-    std::vector<std::string> FS;
-    FileList(FS,Path+"\\userdata");
-    for(std::string&a : FS){
-        if(a.find(FName) != std::string::npos){
-            FS.clear();
-            return true;
-        }
-    }
-    FS.clear();
-    return false;
+	std::vector<std::string> FS;
+	FileList(FS,Path+"\\userdata");
+	for(std::string&a : FS){
+		if(a.find(FName) != std::string::npos){
+			FS.clear();
+			return true;
+		}
+	}
+	FS.clear();
+	return false;
 }
 bool FindHack(const std::string& Path){
-    bool s = true;
-    for (const auto &entry : fs::directory_iterator(Path)) {
-        std::string Name = entry.path().filename().u8string();
-        for(char&c : Name)c = char(tolower(c));
-        if(Name == "steam.exe")s = false;
-        if(Name.find("greenluma") != -1){
-            error("Found malicious file/folder \"" + Name+"\"");
-            return true;
-        }
-        Name.clear();
-    }
-    return s;
+	bool s = true;
+	for (const auto &entry : fs::directory_iterator(Path)) {
+		std::string Name = entry.path().filename().u8string();
+		for(char&c : Name)c = char(tolower(c));
+		if(Name == "steam.exe")s = false;
+		if(Name.find("greenluma") != -1){
+			error("Found malicious file/folder \"" + Name+"\"");
+			return true;
+		}
+		Name.clear();
+	}
+	return s;
 }
 std::vector<std::string> GetID(const std::string& log){
-    std::string vec,t,r;
-    std::vector<std::string> Ret;
-    std::ifstream f(log.c_str(), std::ios::binary);
-    f.seekg(0, std::ios_base::end);
-    std::streampos fileSize = f.tellg();
-    vec.resize(size_t(fileSize) + 1);
-    f.seekg(0, std::ios_base::beg);
-    f.read(&vec[0], fileSize);
-    f.close();
-    std::stringstream ss(vec);
-    bool S = false;
-    while (std::getline(ss, t, '{')) {
-        if(!S)S = true;
-        else{
-            for(char& c : t){
-                if(isdigit(c))r += c;
-            }
-            break;
-        }
-    }
-    Ret.emplace_back(r);
-    r.clear();
-    S = false;
-    bool L = true;
-    while (std::getline(ss, t, '}')) {
-        if(L){
-            L = false;
-            continue;
-        }
-        for(char& c : t){
-            if(c == '"'){
-                if(!S)S = true;
-                else{
-                    if(r.length() > 10) {
-                        Ret.emplace_back(r);
-                    }
-                    r.clear();
-                    S = false;
-                    continue;
-                }
-            }
-            if(isdigit(c))r += c;
-        }
-    }
-    vec.clear();
-    return Ret;
+	std::string vec,t,r;
+	std::vector<std::string> Ret;
+	std::ifstream f(log.c_str(), std::ios::binary);
+	f.seekg(0, std::ios_base::end);
+	std::streampos fileSize = f.tellg();
+	vec.resize(size_t(fileSize) + 1);
+	f.seekg(0, std::ios_base::beg);
+	f.read(&vec[0], fileSize);
+	f.close();
+	std::stringstream ss(vec);
+	bool S = false;
+	while (std::getline(ss, t, '{')) {
+		if(!S)S = true;
+		else{
+			for(char& c : t){
+				if(isdigit(c))r += c;
+			}
+			break;
+		}
+	}
+	Ret.emplace_back(r);
+	r.clear();
+	S = false;
+	bool L = true;
+	while (std::getline(ss, t, '}')) {
+		if(L){
+			L = false;
+			continue;
+		}
+		for(char& c : t){
+			if(c == '"'){
+				if(!S)S = true;
+				else{
+					if(r.length() > 10) {
+						Ret.emplace_back(r);
+					}
+					r.clear();
+					S = false;
+					continue;
+				}
+			}
+			if(isdigit(c))r += c;
+		}
+	}
+	vec.clear();
+	return Ret;
 }
 std::string GetManifest(const std::string& Man){
-    std::string vec;
-    std::ifstream f(Man.c_str(), std::ios::binary);
-    f.seekg(0, std::ios_base::end);
-    std::streampos fileSize = f.tellg();
-    vec.resize(size_t(fileSize) + 1);
-    f.seekg(0, std::ios_base::beg);
-    f.read(&vec[0], fileSize);
-    f.close();
-    std::string ToFind = "\"LastOwner\"\t\t\"";
-    int pos = int(vec.find(ToFind));
-    if(pos != -1){
-        pos += int(ToFind.length());
-        vec = vec.substr(pos);
-        return vec.substr(0,vec.find('\"'));
-    }else return "";
+	std::string vec;
+	std::ifstream f(Man.c_str(), std::ios::binary);
+	f.seekg(0, std::ios_base::end);
+	std::streampos fileSize = f.tellg();
+	vec.resize(size_t(fileSize) + 1);
+	f.seekg(0, std::ios_base::beg);
+	f.read(&vec[0], fileSize);
+	f.close();
+	std::string ToFind = "\"LastOwner\"\t\t\"";
+	int pos = int(vec.find(ToFind));
+	if(pos != -1){
+		pos += int(ToFind.length());
+		vec = vec.substr(pos);
+		return vec.substr(0,vec.find('\"'));
+	}else return "";
 }
 bool IDCheck(std::string Man, std::string steam){
-    bool a = false,b = true;
-    int pos = int(Man.rfind("steamapps"));
-    //if(pos == -1)Exit(5);
-    Man = Man.substr(0,pos+9) + "\\appmanifest_284160.acf";
-    steam += "\\config\\loginusers.vdf";
-    if(fs::exists(Man) && fs::exists(steam)){
-        for(const std::string&ID : GetID(steam)){
-            if(ID == GetManifest(Man))b = false;
-        }
-        //if(b)Exit(6);
-    }else a = true;
-    return a;
+	bool a = false,b = true;
+	int pos = int(Man.rfind("steamapps"));
+	//if(pos == -1)Exit(5);
+	Man = Man.substr(0,pos+9) + "\\appmanifest_284160.acf";
+	steam += "\\config\\loginusers.vdf";
+	if(fs::exists(Man) && fs::exists(steam)){
+		for(const std::string&ID : GetID(steam)){
+			if(ID == GetManifest(Man))b = false;
+		}
+		//if(b)Exit(6);
+	}else a = true;
+	return a;
 }
 void LegitimacyCheck(){
 
@@ -259,24 +259,24 @@ void LegitimacyCheck(){
 		return;
 	}
 
-    std::string Result,T;
-    std::string K1 = R"(Software\Valve\Steam)";
-    std::string K2 = R"(Software\Valve\Steam\Apps\284160)";
-    std::string K3 = R"(Software\BeamNG\BeamNG.drive)";
-    HKEY hKey;
+	std::string Result,T;
+	std::string K1 = R"(Software\Valve\Steam)";
+	std::string K2 = R"(Software\Valve\Steam\Apps\284160)";
+	std::string K3 = R"(Software\BeamNG\BeamNG.drive)";
+	HKEY hKey;
 
-    LONG dwRegOPenKey = OpenKey(HKEY_CURRENT_USER, K1.c_str(), &hKey);
+	LONG dwRegOPenKey = OpenKey(HKEY_CURRENT_USER, K1.c_str(), &hKey);
 
-    K1.clear();
-    RegCloseKey(hKey);
-    dwRegOPenKey = OpenKey(HKEY_CURRENT_USER, K2.c_str(), &hKey);
-    if(dwRegOPenKey == ERROR_SUCCESS) {
-        Result = QueryKey(hKey, 2);
-        if(Result.empty())lowExit(1);
+	K1.clear();
+	RegCloseKey(hKey);
+	dwRegOPenKey = OpenKey(HKEY_CURRENT_USER, K2.c_str(), &hKey);
+	if(dwRegOPenKey == ERROR_SUCCESS) {
+		Result = QueryKey(hKey, 2);
+		if(Result.empty())lowExit(1);
 
-    }else lowExit(2);
-    K2.clear();
-    RegCloseKey(hKey);
+	}else lowExit(2);
+	K2.clear();
+	RegCloseKey(hKey);
 
 		dwRegOPenKey = OpenKey(HKEY_CURRENT_USER, K3.c_str(), &hKey);
 		if(dwRegOPenKey == ERROR_SUCCESS) {
@@ -288,19 +288,19 @@ void LegitimacyCheck(){
 		K3.clear();
 		Result.clear();
 
-    RegCloseKey(hKey);
+	RegCloseKey(hKey);
 }
 std::string CheckVer(const std::string &dir){
-    std::string temp,Path = dir + "\\integrity.json";
-    std::ifstream f(Path.c_str(), std::ios::binary);
-    int Size = int(std::filesystem::file_size(Path));
-    std::string vec(Size,0);
-    f.read(&vec[0], Size);
-    f.close();
+	std::string temp,Path = dir + "\\integrity.json";
+	std::ifstream f(Path.c_str(), std::ios::binary);
+	int Size = int(std::filesystem::file_size(Path));
+	std::string vec(Size,0);
+	f.read(&vec[0], Size);
+	f.close();
 
-    vec = vec.substr(vec.find_last_of("version"),vec.find_last_of('"'));
-    for(const char &a : vec){
-        if(isdigit(a) || a == '.')temp+=a;
-    }
-    return temp;
+	vec = vec.substr(vec.find_last_of("version"),vec.find_last_of('"'));
+	for(const char &a : vec){
+		if(isdigit(a) || a == '.')temp+=a;
+	}
+	return temp;
 }
