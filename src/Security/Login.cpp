@@ -83,16 +83,21 @@ std::string Login(const std::string& fields){
 int tryCount = 0;
 
 void CheckLocalKey(){
+	info("a");
 	tryCount++;
     if(exists("key") && file_size("key") < 100){
+		info("aa");
         std::ifstream Key("key");
         if(Key.is_open()) {
+			info("aaa");
             auto Size = file_size("key");
             std::string Buffer(Size, 0);
             Key.read(&Buffer[0], Size);
             Key.close();
+			info("aaaa");
+
             Buffer = PostHTTP("https://auth.beammp.com/userlogin", R"({"pk":")"+Buffer+"\"}");
-			debug("login auth reply (from local key): " + Buffer);
+			info("login auth reply (from local key): " + Buffer);
             json::Document d;
             d.Parse(Buffer.c_str());
             if (Buffer == "-1" || Buffer.find('{') == -1 || d.HasParseError()) {
