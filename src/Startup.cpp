@@ -15,11 +15,11 @@
 #include "Logger.h"
 #include <thread>
 
-std::string UserFolderOverride;	//path to userfolder (documents/beam)
-std::string GameFolderOverride; //path to beamng exe
+std::string ClientBuild = "public"; //type of zip to download
+std::string UserFolderOverride;  //path to userfolder (documents/beam)
+std::string GameFolderOverride;  //path to beamng exe
 bool Dev = false;
 bool dontLaunchGame = false;
-bool skipMod = false; //skip download of game mod zip
 
 namespace fs = std::filesystem;
 std::string GetExeName(){ //get executable name
@@ -134,6 +134,18 @@ void HandleArgs(int argc, char* argv[]){
         }
     }
 
+    std::string buildName = findArg(argc, argv,"useBuild");
+	if (buildName == "deer"){
+		ClientBuild = "deer";
+		warn("Using deer boi's build"); 
+	} else if (buildName == "none" || findArg(argc, argv,"skipMod") == "true"){
+		ClientBuild = "none";
+		warn("Mod won't be downloaded");
+	} else if (buildName != "" && buildName != "noVal") {
+		ClientBuild = buildName;
+		warn("Using custom build: " + buildName); 
+	}
+
     std::string usrfldr = findArg(argc, argv,"userFolder");
 	if (usrfldr != ""){
 		UserFolderOverride = usrfldr;
@@ -152,10 +164,6 @@ void HandleArgs(int argc, char* argv[]){
 	if (findArg(argc, argv,"launchGame") == "false"){
 		dontLaunchGame = true;
 		warn("Game won't be launched");
-	}
-	if (findArg(argc, argv,"skipMod") == "true"){
-		skipMod = true;
-		warn("Mod won't be downloaded");
 	}
 }
 void InitLauncher(int argc, char* argv[]) {
@@ -194,7 +202,8 @@ void CheckMP(const std::string& Path) {
 void PreGame(const std::string& GamePath){
     CheckMP(GetUserFolder() + "mods/multiplayer");  //deletes existing mods from the mp folder
 
-    if(!skipMod) {
+	if (ClientBuild == "none") return;
+
         info("Downloading mod...");
         try {
             if (!fs::exists(GetUserFolder() + "mods/multiplayer")) {
@@ -203,7 +212,13 @@ void PreGame(const std::string& GamePath){
         }catch(std::exception&e){
             fatal(e.what());
         }
-        Download("https://github.com/20dka/files/blob/master/BeamMP.zip?raw=true", GetUserFolder() + R"(mods\multiplayer\BeamMP.zip)", true);
+
+
+		if (ClientBuild == "public")
+			Download("https://beammp.com/builds/client", GetUserFolder() + R"(mods\multiplayer\BeamMP.zip)", true);
+		else if (ClientBuild == "deer")
+			Download("https://github.com/20dka/files/blob/master/BeamMP.zip?raw=true", GetUserFolder() + R"(mods\multiplayer\BeamMP.zip)", true);
+		else Download(ClientBuild, GetUserFolder() + R"(mods\multiplayer\BeamMP.zip)", true);
+
         info("Download Complete!");
-    }
 }
