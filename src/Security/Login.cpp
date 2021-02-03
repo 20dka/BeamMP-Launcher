@@ -92,7 +92,7 @@ void CheckLocalKey(){
             Key.read(&Buffer[0], Size);
             Key.close();
             Buffer = PostHTTP("https://auth.beammp.com/userlogin", R"({"pk":")"+Buffer+"\"}");
-			debug("login auth reply: " + Buffer);
+			debug("login auth reply (from local key): " + Buffer);
             json::Document d;
             d.Parse(Buffer.c_str());
             if (Buffer == "-1" || Buffer.find('{') == -1 || d.HasParseError()) {
@@ -105,6 +105,7 @@ void CheckLocalKey(){
                 LoginAuth = true;
                 UpdateKey(d["private_key"].GetString());
                 PublicKey = d["public_key"].GetString();
+				debug("public key (from local key): " + PublicKey);
             }else{
                 error("Auto-Authentication unsuccessful please re-login!");
                 UpdateKey(nullptr);
