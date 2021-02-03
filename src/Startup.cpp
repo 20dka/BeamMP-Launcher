@@ -15,7 +15,7 @@
 #include "Logger.h"
 #include <thread>
 
-std::string ClientBuild = "public"; //type of zip to download
+std::string ClientBuild = ""; //type of zip to download
 std::string UserFolderOverride;  //path to userfolder (documents/beam)
 std::string GameFolderOverride;  //path to beamng exe
 bool Dev = false;
@@ -103,7 +103,7 @@ void UpdateLauncher(const std::string& exePath){
 
 void PrintHelp() {
 	info(R"(BeamMP Launcher modded by deer boi. Options are:
-	-port : port number for game communications
+	-port : port number for game communication
 	-updateLauncher true : pulls the latest build from my github
 	-userFolder : path for the game userfolder, must end with \
 	-gameFolder : path for the game install folder
@@ -115,11 +115,11 @@ void PrintHelp() {
 std::string findArg(int argc, char* argv[], const std::string& argName){
 	for(int i = 1;i<argc;i++){
 		if ("-"+argName == argv[i]){
-			if (argc == i+1 || std::string(argv[i+1]).at(0) == '-') return "noVal";
+			if (argc == i+1 || std::string(argv[i+1]).at(0) == '-') return "noVal"; //no parameter
 			else return argv[i+1];
 		}
 	}
-	return "";
+	return ""; //not found
 }
 
 void HandleArgs(int argc, char* argv[]){
@@ -127,7 +127,7 @@ void HandleArgs(int argc, char* argv[]){
 
 	if (findArg(argc, argv,"h") == "noVal" || findArg(argc, argv,"-help") == "noVal") { PrintHelp(); exit(1); } //-h or --help
 
-	if (findArg(argc, argv,"updateLauncher") == "true"){
+	if (findArg(argc, argv,"updateLauncher") != ""){
 		UpdateLauncher(std::string(argv[0]));
 	}
 
@@ -143,6 +143,9 @@ void HandleArgs(int argc, char* argv[]){
 	if (buildName == "deer"){
 		ClientBuild = "deer";
 		warn("Using deer boi's build"); 
+	} else if (buildName == "public"){
+		ClientBuild = "public";
+		warn("Using public build");
 	} else if (buildName == "none" || findArg(argc, argv,"skipMod") == "true"){
 		ClientBuild = "none";
 		warn("Mod won't be downloaded");
@@ -180,6 +183,11 @@ void InitLauncher(int argc, char* argv[]) {
     CheckLocalKey(); //auth on startup
 
     HandleArgs(argc, argv); //cmd args
+
+	if (ClientBuild == "") {
+		info("no build specified, checking backend for roles");
+		ClientBuild = "public";
+	}
 }
 size_t DirCount(const std::filesystem::path& path){
     return (size_t)std::distance(std::filesystem::directory_iterator{path}, std::filesystem::directory_iterator{});
