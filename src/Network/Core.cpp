@@ -19,7 +19,7 @@
 
 std::set<std::string>* ConfList = nullptr;
 bool TCPTerminate = false;
-int DEFAULT_PORT = 4444;
+int GamePort = 4444;
 bool Terminate = false;
 bool LoginAuth = false;
 std::string UlStatus;
@@ -187,7 +187,7 @@ void CoreMain() {
     hints.ai_socktype = SOCK_STREAM;
     hints.ai_protocol = IPPROTO_TCP;
     hints.ai_flags = AI_PASSIVE;
-    iRes = getaddrinfo(nullptr, std::to_string(DEFAULT_PORT).c_str(), &hints, &res);
+    iRes = getaddrinfo(nullptr, std::to_string(GamePort).c_str(), &hints, &res);
     if (iRes){
         debug("(Core) addr info failed with error: " + std::to_string(iRes));
         WSACleanup();

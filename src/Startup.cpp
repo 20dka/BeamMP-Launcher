@@ -129,8 +129,8 @@ void HandleArgs(int argc, char* argv[]){
     std::string Port = findArg(argc, argv,"port");
     if(Port != "" && Port.find_first_not_of("0123456789") == std::string::npos){
         if(std::stoi(Port) > 1000){
-            DEFAULT_PORT = std::stoi(Port);
-            warn("Running on custom port: " + std::to_string(DEFAULT_PORT));
+            GamePort = std::stoi(Port);
+            warn("Running on custom port: " + std::to_string(GamePort));
         }
     }
 
