@@ -90,6 +90,7 @@ int Download(const std::string& URL,const std::string& Path,bool close){
         curl_easy_setopt(curl, CURLOPT_URL,URL.c_str());
         curl_easy_setopt(curl, CURLOPT_SSL_VERIFYHOST, 2L);
         curl_easy_setopt(curl, CURLOPT_SSL_VERIFYPEER, 1L);
+        curl_easy_setopt(curl, CURLOPT_FOLLOWLOCATION, 1L);
         curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, my_fwrite);
         curl_easy_setopt(curl, CURLOPT_WRITEDATA, &file);
         curl_easy_setopt(curl, CURLOPT_NOPROGRESS, FALSE);

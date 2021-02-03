@@ -9,9 +9,9 @@
 #include <string>
 void InitLauncher(int argc, char* argv[]);
 void CheckDir(int argc,char* args[]);
-std::string GetGamePath();
+std::string GetUserFolder();
 std::string GetVer();
-std::string GetEN();
+std::string GetExeName();
 extern bool Dev;
 
 extern bool dontLaunchGame;

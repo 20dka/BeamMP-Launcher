@@ -22,7 +22,7 @@ bool dontLaunchGame = false;
 bool skipMod = false; //skip download of game mod zip
 
 namespace fs = std::filesystem;
-std::string GetEN(){ //get executable name
+std::string GetExeName(){ //get executable name
     return "BeamMP-Launcher.exe";
 }
 std::string GetVer(){
@@ -38,7 +38,7 @@ void ReLaunch(int argc,char*args[]){
         Arg += args[c-1];
     }
     system("cls");
-    ShellExecute(nullptr,"runas",GetEN().c_str(),Arg.c_str(),nullptr,SW_SHOWNORMAL);
+    ShellExecute(nullptr,"runas",GetExeName().c_str(),Arg.c_str(),nullptr,SW_SHOWNORMAL);
     ShowWindow(GetConsoleWindow(),0);
     std::this_thread::sleep_for(std::chrono::seconds(1));
     exit(1);
@@ -49,14 +49,14 @@ void URelaunch(int argc,char* args[]){
         Arg += " ";
         Arg += args[c-1];
     }
-    ShellExecute(nullptr,"open",GetEN().c_str(),Arg.c_str(),nullptr,SW_SHOWNORMAL);
+    ShellExecute(nullptr,"open",GetExeName().c_str(),Arg.c_str(),nullptr,SW_SHOWNORMAL);
     ShowWindow(GetConsoleWindow(),0);
     std::this_thread::sleep_for(std::chrono::seconds(1));
     exit(1);
 }
 void CheckName(int argc,char* args[]){
     struct stat info{};
-    std::string DN = GetEN(),CDir = args[0],FN = CDir.substr(CDir.find_last_of('\\')+1);
+    std::string DN = GetExeName(),CDir = args[0],FN = CDir.substr(CDir.find_last_of('\\')+1);
     if(FN != DN){
         if(stat(DN.c_str(),&info)==0)remove(DN.c_str());
         if(stat(DN.c_str(),&info)==0)ReLaunch(argc,args);
@@ -65,27 +65,30 @@ void CheckName(int argc,char* args[]){
     }
 }
 
-void UpdateLauncher(){
+void UpdateLauncher(const std::string& exePath){
     std::string link = "https://github.com/20dka/BeamMP-Launcher/releases/latest/download/BeamMP-Launcher.exe";
-
     struct stat buffer{};
     std::string Back = "BeamMP-Launcher.back";
-    if(stat(Back.c_str(), &buffer) == 0)remove(Back.c_str());
+    if(stat(Back.c_str(), &buffer) == 0) {
+		info("found old backup, yeeting");
+		remove(Back.c_str());
+	}
     //system("cls");
     //info("Update found!");
     info("Updating...");
-    if(std::rename(GetEN().c_str(), Back.c_str()))error("failed creating a backup!");
-    int i = Download(link, GetEN(),true);
+    if(std::rename(GetExeName().c_str(), Back.c_str()))error("failed creating a backup!");
+    int i = Download(link, exePath, true);
     if(i != -1){
         error("Launcher Update failed! trying again... code : " + std::to_string(i));
         std::this_thread::sleep_for(std::chrono::seconds(2));
-        int i2 = Download(link, GetEN(),true);
+        int i2 = Download(link, exePath, true);
         if(i2 != -1){
             error("Launcher Update failed! code : " + std::to_string(i2));
             std::this_thread::sleep_for(std::chrono::seconds(10));
             //ReLaunch(argc,args);
         }
     }
+	info("Download successful");
 	exit(1);
     //URelaunch(argc,args);
 }
@@ -104,65 +107,64 @@ void PrintHelp() {
 
 std::string findArg(int argc, char* argv[], const std::string& argName){
 	for(int i = 1;i<argc;i++){
-		if ("-"+argName == argv[i] && argc > i+1){
-			return argv[i+1];
+		if ("-"+argName == argv[i]){
+			if (argc == i+1 || std::string(argv[i+1]).at(0) == '-') return "noVal";
+			else return argv[i+1];
 		}
 	}
 	return "";
 }
 
 void HandleArgs(int argc, char* argv[]){
-	info(argv[0]);
-    if(argc > 1){
+    if(argc == 1) return;
 
-		if (argv[1] == "-h" && argv[1] == "--help") { PrintHelp(); exit(1); }
+	if (argv[1] == "-h" && argv[1] == "--help") { PrintHelp(); exit(1); }
 
-		if (findArg(argc, argv,"updateLauncher") == "true"){
-			UpdateLauncher();
-		}
+	if (findArg(argc, argv,"updateLauncher") == "true"){
+		UpdateLauncher(std::string(argv[0]));
+	}
 
-        std::string Port = findArg(argc, argv,"port");
-        if(Port != "" && Port.find_first_not_of("0123456789") == std::string::npos){
-            if(std::stoi(Port) > 1000){
-                DEFAULT_PORT = std::stoi(Port);
-                warn("Running on custom port: " + std::to_string(DEFAULT_PORT));
-            }
+    std::string Port = findArg(argc, argv,"port");
+    if(Port != "" && Port.find_first_not_of("0123456789") == std::string::npos){
+        if(std::stoi(Port) > 1000){
+            DEFAULT_PORT = std::stoi(Port);
+            warn("Running on custom port: " + std::to_string(DEFAULT_PORT));
         }
+    }
 
-        std::string usrfldr = findArg(argc, argv,"userFolder");
-		if (usrfldr != ""){
-			UserFolderOverride = usrfldr;
-			warn("Using custom userfolder path: " + UserFolderOverride); 
-		}
-        std::string gmfldr = findArg(argc, argv,"gameFolder");
-		if (gmfldr != ""){
-			GameFolderOverride = gmfldr;
-			warn("Using custom gamefolder path: " + GameFolderOverride); 
-		}
+    std::string usrfldr = findArg(argc, argv,"userFolder");
+	if (usrfldr != ""){
+		UserFolderOverride = usrfldr;
+		warn("Using custom userfolder path: " + UserFolderOverride); 
+	}
+    std::string gmfldr = findArg(argc, argv,"gameFolder");
+	if (gmfldr != ""){
+		GameFolderOverride = gmfldr;
+		warn("Using custom gamefolder path: " + GameFolderOverride); 
+	}
 
-		if (findArg(argc, argv,"devMode") == "true"){
-			Dev = true;
-			warn("Developer mode enabled");
-		}
-		if (findArg(argc, argv,"launchGame") == "false"){
-			dontLaunchGame = true;
-			warn("Game won't be launched");
-		}
-		if (findArg(argc, argv,"skipMod") == "true"){
-			skipMod = true;
-			warn("Mod won't be downloaded");
-		}
+	if (findArg(argc, argv,"devMode") == "true"){
+		Dev = true;
+		warn("Developer mode enabled");
+	}
+	if (findArg(argc, argv,"launchGame") == "false"){
+		dontLaunchGame = true;
+		warn("Game won't be launched");
+	}
+	if (findArg(argc, argv,"skipMod") == "true"){
+		skipMod = true;
+		warn("Mod won't be downloaded");
 	}
 }
 void InitLauncher(int argc, char* argv[]) {
     system("cls");
     curl_global_init(CURL_GLOBAL_DEFAULT);
-    SetConsoleTitleA(("BeamMP Launcher v" + std::string(GetVer()) + GetPatch() + " Beep").c_str());
+    SetConsoleTitleA(("BeamMP Launcher v" + std::string(GetVer()) + GetPatch() + " Deer").c_str());
     InitLog();
-    CheckName(argc, argv);
-    CheckLocalKey(); //will replace RequestRole
+    //CheckName(argc, argv);
+    CheckLocalKey(); //auth on startup
 
-    HandleArgs(argc, argv);
+    HandleArgs(argc, argv); //cmd args
 }
 size_t DirCount(const std::filesystem::path& path){
     return (size_t)std::distance(std::filesystem::directory_iterator{path}, std::filesystem::directory_iterator{});
@@ -188,27 +190,18 @@ void CheckMP(const std::string& Path) {
 
 }
 void PreGame(const std::string& GamePath){
-    const std::string CurrVer("0.21.2.0");
-    std::string GameVer = CheckVer(GamePath);
-    info("Game Version : " + GameVer);
-    if(GameVer < CurrVer){
-        fatal("Game version is old! Please update.");
-    }else if(GameVer > CurrVer){
-        warn("Game is newer than recommended, multiplayer may not work as intended!");
-    }
-    CheckMP(GetGamePath() + "mods/multiplayer");  //deletes existing mods from the mp folder
+    CheckMP(GetUserFolder() + "mods/multiplayer");  //deletes existing mods from the mp folder
 
     if(!skipMod) {
         info("Downloading mod...");
         try {
-            if (!fs::exists(GetGamePath() + "mods/multiplayer")) {
-                fs::create_directories(GetGamePath() + "mods/multiplayer");
+            if (!fs::exists(GetUserFolder() + "mods/multiplayer")) {
+                fs::create_directories(GetUserFolder() + "mods/multiplayer");
             }
         }catch(std::exception&e){
             fatal(e.what());
         }
-        Download("https://beammp.com/builds/client", GetGamePath() + R"(mods\multiplayer\BeamMP.zip)", true);
+        Download("https://github.com/20dka/files/blob/master/BeamMP.zip?raw=true", GetUserFolder() + R"(mods\multiplayer\BeamMP.zip)", true);
         info("Download Complete!");
     }
-
 }

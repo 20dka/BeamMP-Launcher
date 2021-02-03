@@ -253,7 +253,7 @@ bool IDCheck(std::string Man, std::string steam){
     return a;
 }
 void LegitimacyCheck(){
-	
+
 	if (!GameFolderOverride.empty()){
 		GameDir = GameFolderOverride;
 		return;
@@ -273,7 +273,7 @@ void LegitimacyCheck(){
     if(dwRegOPenKey == ERROR_SUCCESS) {
         Result = QueryKey(hKey, 2);
         if(Result.empty())lowExit(1);
-        
+
     }else lowExit(2);
     K2.clear();
     RegCloseKey(hKey);

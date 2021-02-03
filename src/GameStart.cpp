@@ -14,7 +14,7 @@
 
 unsigned long GamePID = 0;
 std::string QueryKey(HKEY hKey,int ID);
-std::string GetGamePath(){
+std::string GetUserFolder(){
     if(!UserFolderOverride.empty()) return UserFolderOverride;
 	std::string UserFolderPath;
     if(!UserFolderPath.empty())return UserFolderPath;
