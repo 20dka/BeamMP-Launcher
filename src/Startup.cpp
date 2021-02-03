@@ -66,23 +66,28 @@ void CheckName(int argc,char* args[]){
 }
 
 void UpdateLauncher(const std::string& exePath){
-    std::string link = "https://github.com/20dka/BeamMP-Launcher/releases/latest/download/BeamMP-Launcher.exe";
+    std::string launcherURL = "https://github.com/20dka/BeamMP-Launcher/releases/latest/download/BeamMP-Launcher.exe";
 	info("Going to download to: " + exePath);
     struct stat buffer{};
-    std::string Back = "BeamMP-Launcher.back";
+
+    info("Updating...");
+
+	std::string Back = exePath;
+	Back.erase(Back.end()-3,Back.end());
+    Back += "back";
+
     if(stat(Back.c_str(), &buffer) == 0) {
 		info("found old backup, yeeting");
 		remove(Back.c_str());
 	}
-    //system("cls");
-    //info("Update found!");
-    info("Updating...");
-    if(std::rename(GetExeName().c_str(), Back.c_str()))error("failed creating a backup!");
-    int i = Download(link, exePath, true);
+
+    if(std::rename(exePath.c_str(), Back.c_str()))error("failed creating a backup!");
+
+    int i = Download(launcherURL, exePath, true);
     if(i != -1){
         error("Launcher Update failed! trying again... code : " + std::to_string(i));
         std::this_thread::sleep_for(std::chrono::seconds(2));
-        int i2 = Download(link, exePath, true);
+        int i2 = Download(launcherURL, exePath, true);
         if(i2 != -1){
             error("Launcher Update failed! code : " + std::to_string(i2));
             std::this_thread::sleep_for(std::chrono::seconds(10));
@@ -120,7 +125,7 @@ std::string findArg(int argc, char* argv[], const std::string& argName){
 void HandleArgs(int argc, char* argv[]){
     if(argc == 1) return;
 
-	if (argv[1] == "-h" && argv[1] == "--help") { PrintHelp(); exit(1); }
+	if (findArg(argc, argv,"h") == "noVal" || findArg(argc, argv,"-help") == "noVal") { PrintHelp(); exit(1); } //-h or --help
 
 	if (findArg(argc, argv,"updateLauncher") == "true"){
 		UpdateLauncher(std::string(argv[0]));
