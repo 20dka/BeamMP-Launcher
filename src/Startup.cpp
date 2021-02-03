@@ -67,6 +67,7 @@ void CheckName(int argc,char* args[]){
 
 void UpdateLauncher(const std::string& exePath){
     std::string link = "https://github.com/20dka/BeamMP-Launcher/releases/latest/download/BeamMP-Launcher.exe";
+	info("Going to download to: " + exePath);
     struct stat buffer{};
     std::string Back = "BeamMP-Launcher.back";
     if(stat(Back.c_str(), &buffer) == 0) {
@@ -85,6 +86,7 @@ void UpdateLauncher(const std::string& exePath){
         if(i2 != -1){
             error("Launcher Update failed! code : " + std::to_string(i2));
             std::this_thread::sleep_for(std::chrono::seconds(10));
+			exit(1);
             //ReLaunch(argc,args);
         }
     }
@@ -159,7 +161,7 @@ void HandleArgs(int argc, char* argv[]){
 void InitLauncher(int argc, char* argv[]) {
     system("cls");
     curl_global_init(CURL_GLOBAL_DEFAULT);
-    SetConsoleTitleA(("BeamMP Launcher v" + std::string(GetVer()) + GetPatch() + " Deer").c_str());
+    SetConsoleTitleA(("DeerMP Launcher v" + std::string(GetVer()) + GetPatch() + " Deer").c_str());
     InitLog();
     //CheckName(argc, argv);
     CheckLocalKey(); //auth on startup
