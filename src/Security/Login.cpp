@@ -54,16 +54,16 @@ bool CheckRoles() {
 	json::Document d;
 	d.Parse(Rc.c_str());
 	if(Rc == "-1" || d.HasParseError()){
-		warn("Invalid key! Please restart your game.");
+		warn("(Role) Invalid key! Please restart your game.");
 		return false;
 	}
 
-	if(d["username"].IsString() && d["roles"].IsString() && d["guest"].IsBool()){
-		debug("username: " + d["username"].GetString());
-		debug("roles: " + d["roles"].GetString());
-		debug("guest: " + d["guest"].GetString());
+	if(d["roles"].IsString()){
+		std::string role = d["roles"].GetString();
+		info("role: " + role);
+		return true;
 	}else{
-		warn("Invalid authentication data!");
+		warn("(Role) Invalid authentication data!");
 		return false;
 	}
 
