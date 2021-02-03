@@ -47,6 +47,7 @@ std::string Login(const std::string& fields){
     }
     info("Attempting to authenticate...");
     std::string Buffer = PostHTTP("https://auth.beammp.com/userlogin", fields);
+	debug("login auth reply: " + Buffer);
     json::Document d;
     d.Parse(Buffer.c_str());
     if(Buffer == "-1"){
@@ -60,9 +61,11 @@ std::string Login(const std::string& fields){
         LoginAuth = true;
         if(!d["private_key"].IsNull()){
             UpdateKey(d["private_key"].GetString());
+			//debug("private key: " + d["private_key"].GetString());
         }
         if(!d["public_key"].IsNull()){
             PublicKey = d["public_key"].GetString();
+			debug("public key: " + PublicKey);
         }
         info("Authentication successful!");
     }else info("Authentication failed!");
