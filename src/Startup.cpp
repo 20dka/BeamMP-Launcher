@@ -22,15 +22,11 @@ bool Dev = false;
 bool dontLaunchGame = false;
 
 namespace fs = std::filesystem;
-std::string GetExeName(){ //get executable name
-	return "BeamMP-Launcher.exe";
-}
-std::string GetVer(){
-	return "1.80";
-}
-std::string GetPatch(){
-	return ".94";
-}
+std::string GetExeName() return "BeamMP-Launcher.exe"; //get executable name
+std::string GetVer() return "1.80";
+std::string GetPatch() return ".94";
+
+
 void ReLaunch(int argc,char*args[]){
 	std::string Arg;
 	for(int c = 2; c <= argc; c++){
@@ -43,6 +39,7 @@ void ReLaunch(int argc,char*args[]){
 	std::this_thread::sleep_for(std::chrono::seconds(1));
 	exit(1);
 }
+
 void URelaunch(int argc,char* args[]){
 	std::string Arg;
 	for(int c = 2; c <= argc; c++){
@@ -54,6 +51,7 @@ void URelaunch(int argc,char* args[]){
 	std::this_thread::sleep_for(std::chrono::seconds(1));
 	exit(1);
 }
+
 void CheckName(int argc,char* args[]){
 	struct stat info{};
 	std::string DN = GetExeName(),CDir = args[0],FN = CDir.substr(CDir.find_last_of('\\')+1);
@@ -99,7 +97,6 @@ void UpdateLauncher(const std::string& exePath){
 	exit(1);
 	//URelaunch(argc,args);
 }
-
 
 void PrintHelp() {
 	info(R"(BeamMP Launcher modded by deer boi. Options are:
@@ -174,6 +171,7 @@ void HandleArgs(int argc, char* argv[]){
 		warn("Game won't be launched");
 	}
 }
+
 void InitLauncher(int argc, char* argv[]) {
 	system("cls");
 	curl_global_init(CURL_GLOBAL_DEFAULT);
@@ -184,9 +182,8 @@ void InitLauncher(int argc, char* argv[]) {
 	HandleArgs(argc, argv); //cmd args
 
 	CheckLocalKey(); //auth on startup
-
-
 }
+
 size_t DirCount(const std::filesystem::path& path){
 	return (size_t)std::distance(std::filesystem::directory_iterator{path}, std::filesystem::directory_iterator{});
 }
@@ -210,26 +207,31 @@ void CheckMP(const std::string& Path) {
 	}
 
 }
-void PreGame(const std::string& GamePath){
+void PreGame(const std::string& GamePath, const std::string& LauncherPath){
 	CheckMP(GetUserFolder() + "mods/multiplayer");  //deletes existing mods from the mp folder
 
 	if (ClientBuild == "none") return;
 
-		info("Downloading mod...");
-		try {
-			if (!fs::exists(GetUserFolder() + "mods/multiplayer")) {
-				fs::create_directories(GetUserFolder() + "mods/multiplayer");
-			}
-		}catch(std::exception&e){
-			fatal(e.what());
+	info("Downloading mod...");
+	try {
+		if (!fs::exists(GetUserFolder() + "mods/multiplayer")) {
+			fs::create_directories(GetUserFolder() + "mods/multiplayer");
 		}
+	}catch(std::exception&e){
+		fatal(e.what());
+	}
 
 
-		if (ClientBuild == "public")
-			Download("https://beammp.com/builds/client", GetUserFolder() + R"(mods\multiplayer\BeamMP.zip)", true);
-		else if (ClientBuild == "deer")
-			Download("https://github.com/20dka/files/blob/master/BeamMP.zip?raw=true", GetUserFolder() + R"(mods\multiplayer\BeamMP.zip)", true);
-		else Download(ClientBuild, GetUserFolder() + R"(mods\multiplayer\BeamMP.zip)", true);
+	if (ClientBuild == "public")
+		Download("https://beammp.com/builds/client", GetUserFolder() + R"(mods\multiplayer\BeamMP.zip)", true);
+	else if (ClientBuild == "deer")
+		Download("https://github.com/20dka/files/blob/master/BeamMP.zip?raw=true", GetUserFolder() + R"(mods\multiplayer\BeamMP.zip)", true);
+	else Download(ClientBuild, GetUserFolder() + R"(mods\multiplayer\BeamMP.zip)", true);
 
-		info("Download Complete!");
+	std::size_t found = LauncherPath.find_last_of("/\\");
+
+	if (doMainLuasMatch(LauncherPath.substr(0,found+1), "https://github.com/20dka/files/blob/master/BeamMP/main.lua?raw=true")) warn("files match");
+	else warn("files dont match :(");
+
+	info("Download Complete!");
 }

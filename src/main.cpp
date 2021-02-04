@@ -33,7 +33,7 @@ int main(int argc, char* argv[]) {
 		fatal("Main 1 : " + std::string(e.what()));
 	}
 	//info(GetGameDir());
-	PreGame(GetGameDir());
+	PreGame(GetGameDir(), argv[0]);
 	InitGame(GetGameDir());
 	CoreNetwork();
 }

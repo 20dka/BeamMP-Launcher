@@ -7,9 +7,10 @@
 ///
 #pragma once
 #include <string>
-void PreGame(const std::string& GamePath);
+void PreGame(const std::string& GamePath, const std::string& LauncherPath);
 std::string CheckVer(const std::string &path);
 void InitGame(const std::string& Dir);
 std::string GetGameDir();
 void LegitimacyCheck();
 void CheckLocalKey();
+bool doMainLuasMatch(const std::string& gameDir, const std::string& URL);

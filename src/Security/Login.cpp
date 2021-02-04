@@ -113,7 +113,6 @@ std::string Login(const std::string& fields){
 int tryCount = 0;
 
 void CheckLocalKey(){
-	tryCount++;
 	if(exists("key") && file_size("key") < 100){
 		std::ifstream Key("key");
 		if(Key.is_open()) {
@@ -126,7 +125,7 @@ void CheckLocalKey(){
 			json::Document d;
 			d.Parse(Buffer.c_str());
 			if (Buffer == "-1" || Buffer.find('{') == -1 || d.HasParseError()) {
-				if (tryCount < 20) {
+				if (tryCount++ < 5) {
 					error("Invalid answer from authentication servers, please try again later!");
 					CheckLocalKey();
 					return;

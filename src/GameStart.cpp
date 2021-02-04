@@ -12,7 +12,6 @@
 #include <iostream>
 #include <thread>
 
-unsigned long GamePID = 0;
 std::string QueryKey(HKEY hKey,int ID);
 std::string GetUserFolder(){
 	if(!UserFolderOverride.empty()) return UserFolderOverride;
@@ -61,7 +60,6 @@ void StartGame(std::string Dir){
 	bSuccess = CreateProcessA(Dir.c_str(), cstr, nullptr, nullptr, TRUE, 0, nullptr, BaseDir.c_str(), &si, &pi);
 	if (bSuccess){
 		info("Game Launched!");
-		GamePID = pi.dwProcessId;
 		WaitForSingleObject(pi.hProcess, INFINITE);
 		//error("Game Closed! launcher closing soon");
 	}else{

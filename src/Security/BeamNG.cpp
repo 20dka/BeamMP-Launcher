@@ -15,6 +15,9 @@
 #include <string>
 #include <thread>
 #include <ShlDisp.h>
+#include <iterator>
+#include <algorithm>
+
 
 #define MAX_KEY_LENGTH 255
 #define MAX_VALUE_NAME 16383
@@ -27,20 +30,6 @@ void lowExit(int code){
 	error(msg+std::to_string(code));
 	std::this_thread::sleep_for(std::chrono::seconds(10));
 	exit(2);
-}
-void Exit(int code){
-	std::string msg =
-	"Sorry. We do not support cracked copies report this if you believe this is a mistake code ";
-	error(msg+std::to_string(code));
-	std::this_thread::sleep_for(std::chrono::seconds(10));
-	exit(3);
-}
-void SteamExit(int code){
-	std::string msg =
-	"Illegal steam modifications detected report this if you believe this is a mistake code ";
-	error(msg+std::to_string(code));
-	std::this_thread::sleep_for(std::chrono::seconds(10));
-	exit(4);
 }
 std::string GetGameDir(){
 	return GameDir.substr(0,GameDir.find_last_of('\\'));
@@ -159,20 +148,6 @@ bool Find(const std::string& FName,const std::string& Path){
 	FS.clear();
 	return false;
 }
-bool FindHack(const std::string& Path){
-	bool s = true;
-	for (const auto &entry : fs::directory_iterator(Path)) {
-		std::string Name = entry.path().filename().u8string();
-		for(char&c : Name)c = char(tolower(c));
-		if(Name == "steam.exe")s = false;
-		if(Name.find("greenluma") != -1){
-			error("Found malicious file/folder \"" + Name+"\"");
-			return true;
-		}
-		Name.clear();
-	}
-	return s;
-}
 std::vector<std::string> GetID(const std::string& log){
 	std::string vec,t,r;
 	std::vector<std::string> Ret;
@@ -221,37 +196,7 @@ std::vector<std::string> GetID(const std::string& log){
 	vec.clear();
 	return Ret;
 }
-std::string GetManifest(const std::string& Man){
-	std::string vec;
-	std::ifstream f(Man.c_str(), std::ios::binary);
-	f.seekg(0, std::ios_base::end);
-	std::streampos fileSize = f.tellg();
-	vec.resize(size_t(fileSize) + 1);
-	f.seekg(0, std::ios_base::beg);
-	f.read(&vec[0], fileSize);
-	f.close();
-	std::string ToFind = "\"LastOwner\"\t\t\"";
-	int pos = int(vec.find(ToFind));
-	if(pos != -1){
-		pos += int(ToFind.length());
-		vec = vec.substr(pos);
-		return vec.substr(0,vec.find('\"'));
-	}else return "";
-}
-bool IDCheck(std::string Man, std::string steam){
-	bool a = false,b = true;
-	int pos = int(Man.rfind("steamapps"));
-	//if(pos == -1)Exit(5);
-	Man = Man.substr(0,pos+9) + "\\appmanifest_284160.acf";
-	steam += "\\config\\loginusers.vdf";
-	if(fs::exists(Man) && fs::exists(steam)){
-		for(const std::string&ID : GetID(steam)){
-			if(ID == GetManifest(Man))b = false;
-		}
-		//if(b)Exit(6);
-	}else a = true;
-	return a;
-}
+
 void LegitimacyCheck(){
 
 	if (!GameFolderOverride.empty()){
@@ -290,7 +235,7 @@ void LegitimacyCheck(){
 
 	RegCloseKey(hKey);
 }
-std::string CheckVer(const std::string &dir){
+std::string CheckVer(const std::string &dir){ //returns basegame version
 	std::string temp,Path = dir + "\\integrity.json";
 	std::ifstream f(Path.c_str(), std::ios::binary);
 	int Size = int(std::filesystem::file_size(Path));
@@ -303,4 +248,36 @@ std::string CheckVer(const std::string &dir){
 		if(isdigit(a) || a == '.')temp+=a;
 	}
 	return temp;
+}
+
+bool compareFiles(const std::string& p1, const std::string& p2) {
+	std::ifstream f1(p1, std::ifstream::binary|std::ifstream::ate);
+	std::ifstream f2(p2, std::ifstream::binary|std::ifstream::ate);
+	
+	if (f1.fail() || f2.fail()) return false; //file problem
+	
+	if (f1.tellg() != f2.tellg()) return false; //size mismatch
+	
+	//seek back to beginning and use std::equal to compare contents
+	f1.seekg(0, std::ifstream::beg);
+	f2.seekg(0, std::ifstream::beg);
+	return std::equal(std::istreambuf_iterator<char>(f1.rdbuf()),
+						std::istreambuf_iterator<char>(),
+						std::istreambuf_iterator<char>(f2.rdbuf()));
+}
+
+bool doMainLuasMatch(const std::string& p1, const std::string& p2) {
+	std::string localLuaFile = GetGameDir() + "lua/ge/main.lua";
+	std::string remoteLuaFile = p1 + "temp.lua";
+	remove(remoteLuaFile.c_str());
+
+	int i = Download(p2, remoteLuaFile, true);
+	if(i != -1){
+		warn("oops couldnt download");
+		return false;
+	}
+
+	info("comparing " + localLuaFile + " with " + remoteLuaFile);
+
+	return compareFiles(localLuaFile, remoteLuaFile);
 }
