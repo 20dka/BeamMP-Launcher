@@ -47,27 +47,8 @@ std::string GetClientInfo(const std::string& PK) {
 	return "";
 }
 
-bool CheckRoles() {
-	if (PublicKey.empty()) return false;
-	std::string Rc = GetClientInfo(PublicKey);
-	debug("backend reply: " + Rc);
-	json::Document d;
-	d.Parse(Rc.c_str());
-	if(Rc == "-1" || d.HasParseError()){
-		warn("(Role) Invalid key! Please restart your game.");
-		return false;
-	}
-
-	if(d["roles"].IsString()){
-		std::string role = d["roles"].GetString();
-		info("role: " + role);
-		return true;
-	}else{
-		warn("(Role) Invalid authentication data!");
-		return false;
-	}
-
-	return false;
+bool CheckRoles(const std::string& role) {
+	return (role != "USER");
 }
 
 std::string Login(const std::string& fields){
@@ -139,13 +120,18 @@ void CheckLocalKey(){
 					PublicKey = d["public_key"].GetString();
 					info("public key (from local key): " + PublicKey);
 
-
-					if (ClientBuild == "") {
+					if (ClientBuild == "" && d["role"].IsString()) {
 						info("no build specified, checking backend for roles");
 
-						if (CheckRoles()) ClientBuild = "deer";
-						else ClientBuild = "public";
+						std::string role = d["role"].GetString();
+						info("role: " + role);
+
+						if (CheckRoles(role)) {
+							ClientBuild = "deer";
+							info("Check successful, early access granted!");
+						}
 					}
+					if (ClientBuild == "") ClientBuild = "public";
 				}
 			}else{
 				error("Auto-Authentication unsuccessful please re-login!");

@@ -17,6 +17,7 @@
 #include <ShlDisp.h>
 #include <iterator>
 #include <algorithm>
+#include "Curl/http.h"
 
 
 #define MAX_KEY_LENGTH 255
@@ -254,9 +255,9 @@ bool compareFiles(const std::string& p1, const std::string& p2) {
 	std::ifstream f1(p1, std::ifstream::binary|std::ifstream::ate);
 	std::ifstream f2(p2, std::ifstream::binary|std::ifstream::ate);
 	
-	if (f1.fail() || f2.fail()) return false; //file problem
+	if (f1.fail() || f2.fail()) { warn("failed opening one of the files"); return false; } //file problem
 	
-	if (f1.tellg() != f2.tellg()) return false; //size mismatch
+	//if (f1.tellg() != f2.tellg()) { warn("file sizes dont match"); return false; } //size mismatch
 	
 	//seek back to beginning and use std::equal to compare contents
 	f1.seekg(0, std::ifstream::beg);
@@ -267,7 +268,7 @@ bool compareFiles(const std::string& p1, const std::string& p2) {
 }
 
 bool doMainLuasMatch(const std::string& p1, const std::string& p2) {
-	std::string localLuaFile = GetGameDir() + "lua/ge/main.lua";
+	std::string localLuaFile = GetGameDir() + "/lua/ge/main.lua";
 	std::string remoteLuaFile = p1 + "temp.lua";
 	remove(remoteLuaFile.c_str());
 

@@ -22,9 +22,9 @@ bool Dev = false;
 bool dontLaunchGame = false;
 
 namespace fs = std::filesystem;
-std::string GetExeName() return "BeamMP-Launcher.exe"; //get executable name
-std::string GetVer() return "1.80";
-std::string GetPatch() return ".94";
+std::string GetExeName() { return "BeamMP-Launcher.exe"; } //get executable name
+std::string GetVer() { return "1.80"; }
+std::string GetPatch() { return ".94"; }
 
 
 void ReLaunch(int argc,char*args[]){
