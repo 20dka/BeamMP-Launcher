@@ -175,7 +175,7 @@ void HandleArgs(int argc, char* argv[]){
 void InitLauncher(int argc, char* argv[]) {
 	system("cls");
 	curl_global_init(CURL_GLOBAL_DEFAULT);
-	SetConsoleTitleA(("DeerMP Launcher v" + std::string(GetVer()) + GetPatch() + " Deer").c_str());
+	SetConsoleTitleA(("DeerMP Launcher v" + std::string(GetVer()) + GetPatch()).c_str());
 	InitLog();
 	//CheckName(argc, argv); //rename if launcher name is incorrect or something idk noboody needs this
 
@@ -185,10 +185,10 @@ void InitLauncher(int argc, char* argv[]) {
 
 	if (ClientBuild == ""){
 		if (hasEA) {
-			info("yay you get EA");
+			info("Check successful, EA version active");
 			ClientBuild = "deer";
 		} else {
-			info("public build");
+			info("No EA access detected");
 			ClientBuild = "public";
 		}
 	}
@@ -220,7 +220,7 @@ void CheckMP(const std::string& Path) {
 void PreGame(const std::string& GamePath, const std::string& LauncherPath){
 	CheckMP(GetUserFolder() + "mods/multiplayer");  //deletes existing mods from the mp folder
 
-	info(ClientBuild);
+	//info("Downloading build: " + ClientBuild);
 
 	if (ClientBuild == "none") return;
 
@@ -237,11 +237,10 @@ void PreGame(const std::string& GamePath, const std::string& LauncherPath){
 	if (ClientBuild == "public")
 		Download("https://beammp.com/builds/client", GetUserFolder() + R"(mods\multiplayer\BeamMP.zip)", true);
 	else if (ClientBuild == "deer")
-		Download("https://github.com/20dka/files/blob/master/BeamMP.zip?raw=true", GetUserFolder() + R"(mods\multiplayer\BeamMP.zip)", true);
+		Download("https://github.com/20dka/files/blob/master/BeamMP/BeamMP.zip?raw=true", GetUserFolder() + R"(mods\multiplayer\BeamMP.zip)", true);
 	else Download(ClientBuild, GetUserFolder() + R"(mods\multiplayer\BeamMP.zip)", true);
 
 	std::size_t found = LauncherPath.find_last_of("/\\");
-
 	if (doMainLuasMatch(LauncherPath.substr(0,found+1), "https://github.com/20dka/files/blob/master/BeamMP/main.lua?raw=true")) warn("files match");
 	else warn("files dont match :(");
 

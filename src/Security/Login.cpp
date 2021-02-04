@@ -59,7 +59,7 @@ std::string Login(const std::string& fields){
 	}
 	info("Attempting to authenticate...");
 	std::string Buffer = PostHTTP("https://auth.beammp.com/userlogin", fields);
-	debug("login auth reply: " + Buffer);
+	//debug("login auth reply: " + Buffer);
 	json::Document d;
 	d.Parse(Buffer.c_str());
 	if(Buffer == "-1"){
@@ -76,7 +76,7 @@ std::string Login(const std::string& fields){
 		}
 		if(!d["public_key"].IsNull()){
 			PublicKey = d["public_key"].GetString();
-			debug("public key: " + PublicKey);
+			//debug("public key: " + PublicKey);
 		}
 		info("Authentication successful!");
 	}else info("Authentication failed!");
@@ -93,7 +93,7 @@ std::string Login(const std::string& fields){
 
 int tryCount = 0;
 
-void CheckLocalKey(){
+bool CheckLocalKey(){
 	if(exists("key") && file_size("key") < 100){
 		std::ifstream Key("key");
 		if(Key.is_open()) {
@@ -102,7 +102,7 @@ void CheckLocalKey(){
 			Key.read(&Buffer[0], Size);
 			Key.close();
 			Buffer = PostHTTP("https://auth.beammp.com/userlogin", R"({"pk":")"+Buffer+"\"}");
-			info("login auth reply (from local key): " + Buffer);
+			//info("login auth reply (from local key): " + Buffer);
 			json::Document d;
 			d.Parse(Buffer.c_str());
 			if (Buffer == "-1" || Buffer.find('{') == -1 || d.HasParseError()) {
@@ -117,7 +117,7 @@ void CheckLocalKey(){
 
 				if(!d["public_key"].IsNull()){
 					PublicKey = d["public_key"].GetString();
-					info("public key (from local key): " + PublicKey);
+					//info("public key (from local key): " + PublicKey);
 
 					if (d["role"].IsString()) {
 						info("checking backend for roles");
@@ -125,7 +125,7 @@ void CheckLocalKey(){
 						std::string role = d["role"].GetString();
 						info("role: " + role);
 
-						return CheckRoles(role))
+						return CheckRoles(role);
 					}
 				}
 			}else{
