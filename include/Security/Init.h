@@ -12,5 +12,5 @@ std::string CheckVer(const std::string &path);
 void InitGame(const std::string& Dir);
 std::string GetGameDir();
 void LegitimacyCheck();
-void CheckLocalKey();
+bool CheckLocalKey();
 bool doMainLuasMatch(const std::string& gameDir, const std::string& URL);

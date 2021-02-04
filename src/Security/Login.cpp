@@ -108,8 +108,7 @@ void CheckLocalKey(){
 			if (Buffer == "-1" || Buffer.find('{') == -1 || d.HasParseError()) {
 				if (tryCount++ < 5) {
 					error("Invalid answer from authentication servers, please try again later!");
-					CheckLocalKey();
-					return;
+					return CheckLocalKey();
 				} else fatal("Invalid answer from authentication servers, please try again later!");
 			}
 			if(d["success"].GetBool()){
@@ -120,18 +119,14 @@ void CheckLocalKey(){
 					PublicKey = d["public_key"].GetString();
 					info("public key (from local key): " + PublicKey);
 
-					if (ClientBuild == "" && d["role"].IsString()) {
-						info("no build specified, checking backend for roles");
+					if (d["role"].IsString()) {
+						info("checking backend for roles");
 
 						std::string role = d["role"].GetString();
 						info("role: " + role);
 
-						if (CheckRoles(role)) {
-							ClientBuild = "deer";
-							info("Check successful, early access granted!");
-						}
+						return CheckRoles(role))
 					}
-					if (ClientBuild == "") ClientBuild = "public";
 				}
 			}else{
 				error("Auto-Authentication unsuccessful please re-login!");
@@ -142,4 +137,5 @@ void CheckLocalKey(){
 			UpdateKey(nullptr);
 		}
 	}else UpdateKey(nullptr);
+	return false;
 }

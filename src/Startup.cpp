@@ -181,7 +181,17 @@ void InitLauncher(int argc, char* argv[]) {
 
 	HandleArgs(argc, argv); //cmd args
 
-	CheckLocalKey(); //auth on startup
+	bool hasEA = CheckLocalKey(); //auth on startup
+
+	if (ClientBuild == ""){
+		if (hasEA) {
+			info("yay you get EA");
+			ClientBuild = "deer";
+		} else {
+			info("public build");
+			ClientBuild = "public";
+		}
+	}
 }
 
 size_t DirCount(const std::filesystem::path& path){
@@ -209,6 +219,8 @@ void CheckMP(const std::string& Path) {
 }
 void PreGame(const std::string& GamePath, const std::string& LauncherPath){
 	CheckMP(GetUserFolder() + "mods/multiplayer");  //deletes existing mods from the mp folder
+
+	info(ClientBuild);
 
 	if (ClientBuild == "none") return;
 
