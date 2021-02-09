@@ -8,9 +8,9 @@
 #pragma once
 #include <string>
 void PreGame(const std::string& GamePath, const std::string& LauncherPath);
+bool doMainLuasMatch(const std::string& gameDir, const std::string& URL);
 std::string CheckVer(const std::string &path);
 void InitGame(const std::string& Dir);
+std::string CheckLocalKey();
 std::string GetGameDir();
-void LegitimacyCheck();
-bool CheckLocalKey();
-bool doMainLuasMatch(const std::string& gameDir, const std::string& URL);
+void RegistryChecks();

@@ -19,7 +19,7 @@ std::string ClientBuild = ""; //type of zip to download
 std::string UserFolderOverride;  //path to userfolder (documents/beam)
 std::string GameFolderOverride;  //path to beamng exe
 bool Dev = false;
-bool dontLaunchGame = false;
+int LaunchGame = 0; //0: open launcher, 1: skip launcher, 2: dont launch
 
 namespace fs = std::filesystem;
 std::string GetExeName() { return "BeamMP-Launcher.exe"; } //get executable name
@@ -166,9 +166,15 @@ void HandleArgs(int argc, char* argv[]){
 		Dev = true;
 		warn("Developer mode enabled");
 	}
-	if (findArg(argc, argv,"launchGame") == "false"){
-		dontLaunchGame = true;
+	
+	std::string launchGame = findArg(argc, argv,"launchGame");
+	
+	if (launchGame == "false"){
+		LaunchGame = 2;
 		warn("Game won't be launched");
+	} else if (launchGame == "skipLauncher"){
+		LaunchGame = 1;
+		warn("Skipping launcher");
 	}
 }
 
@@ -240,9 +246,9 @@ void PreGame(const std::string& GamePath, const std::string& LauncherPath){
 		Download("https://github.com/20dka/files/blob/master/BeamMP/BeamMP.zip?raw=true", GetUserFolder() + R"(mods\multiplayer\BeamMP.zip)", true);
 	else Download(ClientBuild, GetUserFolder() + R"(mods\multiplayer\BeamMP.zip)", true);
 
-	std::size_t found = LauncherPath.find_last_of("/\\");
-	if (doMainLuasMatch(LauncherPath.substr(0,found+1), "https://github.com/20dka/files/blob/master/BeamMP/main.lua?raw=true")) warn("files match");
-	else warn("files dont match :(");
+	//std::size_t found = LauncherPath.find_last_of("/\\");
+	//if (doMainLuasMatch(LauncherPath.substr(0,found+1), "https://github.com/20dka/files/blob/master/BeamMP/main.lua?raw=true")) warn("files match");
+	//else warn("files dont match :(");
 
 	info("Download Complete!");
 }

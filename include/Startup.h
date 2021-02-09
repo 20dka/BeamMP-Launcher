@@ -14,7 +14,7 @@ std::string GetVer();
 std::string GetExeName();
 extern bool Dev;
 
-extern bool dontLaunchGame;
+extern int LaunchGame;
 extern std::string GameFolderOverride;
 extern std::string UserFolderOverride;
 extern std::string ClientBuild;

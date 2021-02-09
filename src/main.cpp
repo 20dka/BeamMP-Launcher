@@ -28,7 +28,7 @@ int main(int argc, char* argv[]) {
 	InitLauncher(argc,argv);
 
 	try {
-		LegitimacyCheck();
+		RegistryChecks(); //only used to get some paths
 	}catch (std::exception&e){
 		fatal("Main 1 : " + std::string(e.what()));
 	}

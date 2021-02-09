@@ -47,10 +47,6 @@ std::string GetClientInfo(const std::string& PK) {
 	return "";
 }
 
-bool CheckRoles(const std::string& role) {
-	return (role != "USER");
-}
-
 std::string Login(const std::string& fields){
 	if(fields == "LO"){
 		LoginAuth = false;
@@ -93,7 +89,7 @@ std::string Login(const std::string& fields){
 
 int tryCount = 0;
 
-bool CheckLocalKey(){
+std::string CheckLocalKey(){
 	if(exists("key") && file_size("key") < 100){
 		std::ifstream Key("key");
 		if(Key.is_open()) {
@@ -125,7 +121,7 @@ bool CheckLocalKey(){
 						std::string role = d["role"].GetString();
 						info("role: " + role);
 
-						return CheckRoles(role);
+						return role;
 					}
 				}
 			}else{
@@ -137,5 +133,5 @@ bool CheckLocalKey(){
 			UpdateKey(nullptr);
 		}
 	}else UpdateKey(nullptr);
-	return false;
+	return "";
 }

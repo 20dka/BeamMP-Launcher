@@ -118,37 +118,6 @@ std::string QueryKey(HKEY hKey,int ID){
 }
 namespace fs = std::filesystem;
 
-bool NameValid(const std::string& N){
-	if(N == "config" || N == "librarycache"){
-		return true;
-	}
-	if(N.find_first_not_of("0123456789") == std::string::npos){
-		return true;
-	}
-	return false;
-}
-void FileList(std::vector<std::string>&a,const std::string& Path){
-	for (const auto &entry : fs::directory_iterator(Path)) {
-		const auto& DPath = entry.path();
-		if (!entry.is_directory()) {
-			a.emplace_back(DPath.u8string());
-		}else if(NameValid(DPath.filename().u8string())){
-			FileList(a, DPath.u8string());
-		}
-	}
-}
-bool Find(const std::string& FName,const std::string& Path){
-	std::vector<std::string> FS;
-	FileList(FS,Path+"\\userdata");
-	for(std::string&a : FS){
-		if(a.find(FName) != std::string::npos){
-			FS.clear();
-			return true;
-		}
-	}
-	FS.clear();
-	return false;
-}
 std::vector<std::string> GetID(const std::string& log){
 	std::string vec,t,r;
 	std::vector<std::string> Ret;
@@ -198,7 +167,7 @@ std::vector<std::string> GetID(const std::string& log){
 	return Ret;
 }
 
-void LegitimacyCheck(){
+void RegistryChecks(){
 
 	if (!GameFolderOverride.empty()){
 		GameDir = GameFolderOverride;

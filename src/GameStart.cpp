@@ -47,10 +47,9 @@ void StartGame(std::string Dir){
 	si.cb = sizeof(si);
 	std::string BaseDir = Dir; //+"\\Bin64";
 	//Dir += R"(\Bin64\BeamNG.drive.x64.exe)";
-	
-	
+
 	std::string s = "";
- 	if(!UserFolderOverride.empty()) s = " -userpath " + UserFolderOverride;
+ 	if(LaunchGame == 1) s = " -userpath " + GetUserFolder(); //force the userpath option, skipping the launcher
 
 	size_t cstrSize = s.size() + 1;
 	char* cstr = new char[cstrSize];
@@ -61,7 +60,7 @@ void StartGame(std::string Dir){
 	if (bSuccess){
 		info("Game Launched!");
 		WaitForSingleObject(pi.hProcess, INFINITE);
-		//error("Game Closed! launcher closing soon");
+		error("Game Closed! launcher closing soon");
 	}else{
 		error("Failed to Launch the game! launcher closing soon");
 	}
@@ -69,7 +68,7 @@ void StartGame(std::string Dir){
 	exit(2);
 }
 void InitGame(const std::string& Dir){
-	if(!dontLaunchGame){
+	if(LaunchGame != 2){
 		std::thread Game(StartGame, Dir);
 		Game.detach();
 	}
