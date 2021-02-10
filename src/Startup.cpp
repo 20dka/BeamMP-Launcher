@@ -139,16 +139,19 @@ void HandleArgs(int argc, char* argv[]){
 	std::string buildName = findArg(argc, argv,"useBuild");
 	if (buildName == "deer"){
 		ClientBuild = "deer";
-		warn("Using deer boi's build"); 
+		warn("deer boi's build selected"); 
+	} else if (buildName == "EA"){
+		ClientBuild = "EA";
+		warn("EA build selected");
 	} else if (buildName == "public"){
 		ClientBuild = "public";
-		warn("Using public build");
+		warn("public build selected");
 	} else if (buildName == "none" || findArg(argc, argv,"skipMod") == "true"){
 		ClientBuild = "none";
 		warn("Mod won't be downloaded");
 	} else if (buildName != "" && buildName != "noVal") {
 		ClientBuild = buildName;
-		warn("Using custom build: " + buildName);
+		warn("custom build selected: " + buildName);
 	}
 
 	std::string usrfldr = findArg(argc, argv,"userFolder");
@@ -194,8 +197,7 @@ void InitLauncher(int argc, char* argv[]) {
 	if (role != "" && role != "USER"){ //either EA or staff
 		if (role == "MDEV"){
 			
-		}
-		if (ClientBuild == "EA"){ //opt in
+		} else if (ClientBuild == "EA"){ //opt in
 			ClientBuild = "deer";
 		} else {
 			ClientBuild = "public";
