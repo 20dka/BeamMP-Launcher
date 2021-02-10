@@ -148,7 +148,7 @@ void HandleArgs(int argc, char* argv[]){
 		warn("Mod won't be downloaded");
 	} else if (buildName != "" && buildName != "noVal") {
 		ClientBuild = buildName;
-		warn("Using custom build: " + buildName); 
+		warn("Using custom build: " + buildName);
 	}
 
 	std::string usrfldr = findArg(argc, argv,"userFolder");
@@ -166,9 +166,9 @@ void HandleArgs(int argc, char* argv[]){
 		Dev = true;
 		warn("Developer mode enabled");
 	}
-	
+
 	std::string launchGame = findArg(argc, argv,"launchGame");
-	
+
 	if (launchGame == "false"){
 		LaunchGame = 2;
 		warn("Game won't be launched");
@@ -187,16 +187,22 @@ void InitLauncher(int argc, char* argv[]) {
 
 	HandleArgs(argc, argv); //cmd args
 
-	bool hasEA = CheckLocalKey(); //auth on startup
+	std::string role = CheckLocalKey(); //auth on startup
 
-	if (ClientBuild == ""){
-		if (hasEA) {
-			info("Check successful, EA version active");
+	if (ClientBuild == "") ClientBuild = "public";
+
+	if (role != "" && role != "USER"){ //either EA or staff
+		if (role == "MDEV"){
+			
+		}
+		if (ClientBuild == "EA"){ //opt in
 			ClientBuild = "deer";
 		} else {
-			info("No EA access detected");
 			ClientBuild = "public";
 		}
+	} else {
+		info("No EA access detected");
+		ClientBuild = "public";
 	}
 }
 

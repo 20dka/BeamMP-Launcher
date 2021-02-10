@@ -113,9 +113,8 @@ std::string CheckLocalKey(){
 
 				if(!d["public_key"].IsNull()){
 					PublicKey = d["public_key"].GetString();
-					//info("public key (from local key): " + PublicKey);
 
-					if (d["role"].IsString()) {
+					if (!d["role"].IsNull() && d["role"].IsString()) {
 						info("checking backend for roles");
 
 						std::string role = d["role"].GetString();
