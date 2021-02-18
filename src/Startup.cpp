@@ -140,6 +140,9 @@ void HandleArgs(int argc, char* argv[]){
 	if (buildName == "deer"){
 		ClientBuild = "deer";
 		warn("deer boi's build selected"); 
+	} else if (buildName == "preston"){
+		ClientBuild = "preston";
+		warn("preston's build selected");
 	} else if (buildName == "EA"){
 		ClientBuild = "EA";
 		warn("EA build selected");
@@ -195,7 +198,7 @@ void InitLauncher(int argc, char* argv[]) {
 	if (ClientBuild == "") ClientBuild = "public";
 
 	if (role != "" && role != "USER"){ //either EA or staff
-		if (role == "MDEV"){
+		if (role == "MDEV" || role == "SUPPORT"){
 			
 		} else if (ClientBuild == "EA"){ //opt in
 			ClientBuild = "deer";
@@ -252,6 +255,8 @@ void PreGame(const std::string& GamePath, const std::string& LauncherPath){
 		Download("https://beammp.com/builds/client", GetUserFolder() + R"(mods\multiplayer\BeamMP.zip)", true);
 	else if (ClientBuild == "deer")
 		Download("https://github.com/20dka/files/blob/master/BeamMP/BeamMP.zip?raw=true", GetUserFolder() + R"(mods\multiplayer\BeamMP.zip)", true);
+	else if (ClientBuild == "preston")
+		Download("https://github.com/prestonelam2003/files/blob/master/BeamMP/BeamMP.zip?raw=true", GetUserFolder() + R"(mods\multiplayer\BeamMP.zip)", true);
 	else Download(ClientBuild, GetUserFolder() + R"(mods\multiplayer\BeamMP.zip)", true);
 
 	//std::size_t found = LauncherPath.find_last_of("/\\");
