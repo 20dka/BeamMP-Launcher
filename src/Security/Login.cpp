@@ -118,7 +118,7 @@ std::string CheckLocalKey(){
 						info("checking backend for roles");
 
 						std::string role = d["role"].GetString();
-						//info("role: " + role);
+						debug("role: " + role);
 
 						return role;
 					}
